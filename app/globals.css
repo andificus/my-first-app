@@ -64,3 +64,15 @@ body {
 .btn:hover {
   transform: translateY(-1px);
 }
+
+/* Navbar links */
+.navLink {
+  font-size: 14px;
+  text-decoration: none;
+  color: #0b0d12;
+  opacity: 0.8;
+}
+
+.navLink:hover {
+  opacity: 1;
+}
