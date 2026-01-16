@@ -352,9 +352,7 @@ export default function ProfilePage() {
             </div>
           </label>
                     {/* ===== My Account (Auth) ===== */}
-          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>My Account</div>
-          
+          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>        
             <div style={{ fontSize: 13, color: '#444', marginBottom: 10 }}>
               Current email:{' '}
               <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
