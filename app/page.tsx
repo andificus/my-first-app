@@ -23,7 +23,7 @@ export default function Home() {
             letterSpacing: '-0.03em',
           }}
         >
-          Build. Learn. Ship.
+          Build. Learn.
         </h1>
 
         <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
