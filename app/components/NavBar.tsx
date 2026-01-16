@@ -35,21 +35,35 @@ export default function NavBar() {
         borderBottom: '1px solid #e5e5e5',
       }}
     >
+      {/* Brand / Home */}
       <Link href="/" style={{ fontWeight: 700 }}>
         My App
       </Link>
 
-      <Link href="/">Dashboard</Link>
-      <Link href="/profile">Profile</Link>
+      {/* Primary nav */}
+      {userEmail && (
+        <>
+          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/profile">Profile</Link>
+        </>
+      )}
 
-      <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
+      {/* Right side */}
+      <div
+        style={{
+          marginLeft: 'auto',
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+        }}
+      >
         {userEmail ? (
           <>
             <span style={{ fontSize: 14, opacity: 0.8 }}>{userEmail}</span>
             <button onClick={logout}>Log out</button>
           </>
         ) : (
-          <span style={{ fontSize: 14, opacity: 0.8 }}>Not logged in</span>
+          <Link href="/login">Login</Link>
         )}
       </div>
     </div>
