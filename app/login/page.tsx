@@ -31,13 +31,13 @@ export default function LoginPage() {
   }
 
   const resetPassword = async () => {
-  setMessage('')
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
-  })
+    setMessage('')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
 
-  setMessage(error ? error.message : 'Check your email to set a password.')
-}
+    setMessage(error ? error.message : 'Check your email to set a password.')
+  }
 
   const signUp = async () => {
     setMessage('')
