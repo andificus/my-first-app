@@ -137,7 +137,7 @@ export default function ProfilePage() {
     setStatus({ type: 'info', msg: 'Uploading avatar…' })
 
     const ext = file.name.split('.').pop()?.toLowerCase() || 'png'
-    const path = `${userId}/avatar.${ext}`
+    const path = `${userId}/avatar-${Date.now()}.${ext}`
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
