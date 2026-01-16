@@ -49,7 +49,6 @@ export default function Home() {
         <h1>Dashboard</h1>
         <p>You’re logged in as: <b>{userEmail}</b></p>
         <button onClick={signOut}>Log out</button>
-        <p><a href="/profile">Go to Profile</a></p>
       </main>
     )
   }
