@@ -30,6 +30,15 @@ export default function LoginPage() {
     }
   }
 
+  const resetPassword = async () => {
+  setMessage('')
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  })
+
+  setMessage(error ? error.message : 'Check your email to set a password.')
+}
+
   const signUp = async () => {
     setMessage('')
     const { error } = await supabase.auth.signUp({
@@ -64,6 +73,10 @@ export default function LoginPage() {
         Log in
       </button>
 
+      <button className="btn btnGhost" onClick={resetPassword} style={{width: '100%', marginTop: 10}}>
+        Forgot Pasword?  
+      </button>
+      
       <button
         className="btn btnGhost"
         onClick={signUp}
