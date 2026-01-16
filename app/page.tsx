@@ -47,8 +47,7 @@ export default function Home() {
     return (
       <main style={{ padding: 40 }}>
         <h1>Dashboard</h1>
-        <p>You’re logged in as: <b>{userEmail}</b></p>
-        <button onClick={signOut}>Log out</button>
+        <p>This is my App</p>
       </main>
     )
   }
