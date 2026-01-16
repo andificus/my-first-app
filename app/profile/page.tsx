@@ -227,10 +227,17 @@ export default function ProfilePage() {
     setSaving(false)
 
     if (error) {
-      // If username is taken, you'll usually get a unique violation
+      if (error.code === '23505') {
+        setStatus({
+          type: 'error',
+          msg: 'That username is already taken. Please choose another.',
+      })
+    } else {
       setStatus({ type: 'error', msg: error.message })
-      return
     }
+    return
+  }
+
 
     const saved: Profile = {
       full_name: full_name || '',
