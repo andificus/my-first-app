@@ -3,9 +3,12 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+
 
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -21,6 +24,8 @@ export default function NavBar() {
 
   const logout = async () => {
     await supabase.auth.signOut()
+    setUserEmail(null)
+    router.push('/') // send them to Home
   }
 
   return (
