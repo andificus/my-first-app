@@ -8,10 +8,17 @@ export default function Home() {
   const [message, setMessage] = useState('')
 
   const signIn = async () => {
-    const { error } = await supabase.auth.signInWithOtp({ email })
-    if (error) setMessage(error.message)
-    else setMessage('Check your email for the login link!')
-  }
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: window.location.origin,
+    },
+  })
+
+  if (error) setMessage(error.message)
+  else setMessage('Check your email for the login link!')
+}
+
 
   return (
     <main style={{ padding: 40 }}>
