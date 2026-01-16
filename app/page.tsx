@@ -27,8 +27,7 @@ export default function Home() {
         </h1>
 
         <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
-          A modern web app I’m building hands-on to expand my skill set — with a long-term goal of turning it into
-          something real that could generate income.
+          A modern web app I’m building hands-on to expand my skill set.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
