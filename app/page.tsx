@@ -71,8 +71,7 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What’s next</h2>
           <p className="p">
-            Notes, a more advanced dashboard, mobile-friendly UI — and eventually a paid tier experiment once there’s
-            real value.
+            Notes, a more advanced dashboard, mobile-friendly UI — and more to come.
           </p>
         </div>
       </section>
