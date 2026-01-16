@@ -304,46 +304,6 @@ export default function ProfilePage() {
         <p>{status.msg}</p>
       ) : (
         <div style={{ border: '1px solid #e5e5e5', borderRadius: 16, padding: 20 }}>
-          
-          {/* ===== My Account (Auth) ===== */}
-          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>My Account</div>
-          
-            <div style={{ fontSize: 13, color: '#444', marginBottom: 10 }}>
-              Current email:{' '}
-              <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
-            </div>
-          
-            <label style={{ display: 'block', marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>New email</div>
-              <input
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
-                placeholder="new@email.com"
-                autoComplete="email"
-              />
-            </label>
-          
-            <button
-              onClick={updateEmail}
-              disabled={updatingEmail || !newEmail.trim()}
-              style={{
-                padding: '10px 14px',
-                borderRadius: 10,
-                border: '1px solid #ccc',
-                background: updatingEmail ? '#f5f5f5' : '#fff',
-                cursor: updatingEmail ? 'not-allowed' : 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              {updatingEmail ? 'Updating…' : 'Update email'}
-            </button>
-          
-            <div style={{ fontSize: 12, color: '#777', marginTop: 8 }}>
-              You’ll get a confirmation email before the change takes effect.
-            </div>
-          </div>
 
           {/* ===== Avatar ===== */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 20 }}>
@@ -391,6 +351,45 @@ export default function ProfilePage() {
               3–20 chars: a-z, 0-9, underscore
             </div>
           </label>
+                    {/* ===== My Account (Auth) ===== */}
+          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>My Account</div>
+          
+            <div style={{ fontSize: 13, color: '#444', marginBottom: 10 }}>
+              Current email:{' '}
+              <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
+            </div>
+          
+            <label style={{ display: 'block', marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>New email</div>
+              <input
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+                placeholder="new@email.com"
+                autoComplete="email"
+              />
+            </label>
+          
+            <button
+              onClick={updateEmail}
+              disabled={updatingEmail || !newEmail.trim()}
+              style={{
+                padding: '10px 14px',
+                borderRadius: 10,
+                border: '1px solid #ccc',
+                background: updatingEmail ? '#f5f5f5' : '#fff',
+                cursor: updatingEmail ? 'not-allowed' : 'pointer',
+                fontWeight: 600,
+              }}
+            >
+              {updatingEmail ? 'Updating…' : 'Update email'}
+            </button>
+          
+            <div style={{ fontSize: 12, color: '#777', marginTop: 8 }}>
+              You’ll get a confirmation email before the change takes effect.
+            </div>
+          </div>
 
           {/* ===== Full name ===== */}
           <label style={{ display: 'block' }}>
