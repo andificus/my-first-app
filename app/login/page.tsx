@@ -7,10 +7,10 @@ import { supabase } from '../../lib/supabaseClient'
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    // If already logged in, go straight to dashboard
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) router.replace('/dashboard')
     })
@@ -18,35 +18,61 @@ export default function LoginPage() {
 
   const signIn = async () => {
     setMessage('')
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+      password,
     })
 
-    setMessage(error ? error.message : 'Check your email for the login link!')
+    if (error) {
+      setMessage(error.message)
+    } else {
+      router.push('/dashboard')
+    }
+  }
+
+  const signUp = async () => {
+    setMessage('')
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+
+    setMessage(error ? error.message : 'Account created. You can now log in.')
   }
 
   return (
-    <main style={{ padding: 40, maxWidth: 700, margin: '0 auto' }}>
-      <h1>Login</h1>
+    <main style={{ padding: 40, maxWidth: 420, margin: '80px auto' }}>
+      <h1>Sign in</h1>
 
-      <div style={{ marginTop: 16, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <input
-          type="email"
-          placeholder="email@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10, minWidth: 260, border: '1px solid #ccc', borderRadius: 8 }}
-        />
-        <button
-          onClick={signIn}
-          style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc', cursor: 'pointer' }}
-        >
-          Send Login Link
-        </button>
-      </div>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ width: '100%', padding: 10, marginBottom: 10 }}
+      />
 
-      {message ? <p style={{ marginTop: 12 }}>{message}</p> : null}
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ width: '100%', padding: 10, marginBottom: 14 }}
+      />
+
+      <button className="btn btnPrimary" onClick={signIn} style={{ width: '100%' }}>
+        Log in
+      </button>
+
+      <button
+        className="btn btnGhost"
+        onClick={signUp}
+        style={{ width: '100%', marginTop: 10 }}
+      >
+        Create account
+      </button>
+
+      {message && <p style={{ marginTop: 14 }}>{message}</p>}
     </main>
   )
 }
