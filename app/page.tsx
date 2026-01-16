@@ -2,45 +2,88 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main style={{ padding: 40, maxWidth: 900, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 44, marginBottom: 8 }}>My App</h1>
-
-      <p style={{ fontSize: 18, lineHeight: 1.6, opacity: 0.9, marginTop: 0 }}>
-        A personal project where I’m learning modern web development — and building something
-        I can eventually turn into a real product.
-      </p>
-
-      <div
-        style={{
-          marginTop: 24,
-          padding: 18,
-          border: '1px solid #e5e5e5',
-          borderRadius: 12,
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>What this app does</h2>
-        <ul style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
-          <li>Secure login (magic link)</li>
-          <li>User profile (name + bio)</li>
-          <li>Dashboard experience</li>
-          <li>More features coming (notes, mobile, monetization experiments)</li>
-        </ul>
-      </div>
-
-      <div
-        style={{
-          marginTop: 18,
-          padding: 18,
-          border: '1px solid #e5e5e5',
-          borderRadius: 12,
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>Why I’m building it</h2>
-        <p style={{ margin: 0, opacity: 0.9, lineHeight: 1.6 }}>
-          I learn best by building hands-on. This project is my way to level up my skills.
+    <main
+      style={{
+        maxWidth: 980,
+        margin: '0 auto',
+        padding: '72px 28px',
+      }}
+    >
+      {/* Hero */}
+      <section style={{ marginBottom: 44 }}>
+        <p style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12, opacity: 0.75 }}>
+          Personal project
         </p>
-      </div>
+
+        <h1
+          style={{
+            fontSize: 54,
+            lineHeight: 1.05,
+            margin: '10px 0 14px',
+            letterSpacing: '-0.03em',
+          }}
+        >
+          Build. Learn. Ship.
+        </h1>
+
+        <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
+          A modern web app I’m building hands-on to expand my skill set — with a long-term goal of turning it into
+          something real that could generate income.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
+          {/* This will either work (if logged in) or redirect to login (if not) */}
+          <Link href="/dashboard" className="btn btnPrimary">
+            Go to Dashboard
+          </Link>
+
+          <Link href="/profile" className="btn btnGhost">
+            Edit Profile
+          </Link>
+        </div>
+      </section>
+
+      {/* Cards */}
+      <section
+        style={{
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        }}
+      >
+        <div className="card">
+          <h2 className="h2">What it is</h2>
+          <p className="p">
+            A clean, secure foundation: authentication, user profiles, and a dashboard — built to grow into future
+            features.
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 className="h2">What I’m practicing</h2>
+          <ul className="list">
+            <li>Modern React + Next.js</li>
+            <li>Auth + database (Supabase)</li>
+            <li>Deployment (GitHub → Vercel)</li>
+            <li>Product thinking + UX</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h2 className="h2">What’s next</h2>
+          <p className="p">
+            Notes, a more advanced dashboard, mobile-friendly UI — and eventually a paid tier experiment once there’s
+            real value.
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ marginTop: 56, paddingTop: 22, borderTop: '1px solid rgba(0,0,0,0.08)', opacity: 0.75 }}>
+        <p style={{ margin: 0, fontSize: 13 }}>
+          Built with Next.js + Supabase. Deployed on Vercel.
+        </p>
+      </footer>
     </main>
   )
 }
-
