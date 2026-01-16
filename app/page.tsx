@@ -37,8 +37,7 @@ export default function Home() {
       >
         <h2 style={{ marginTop: 0 }}>Why I’m building it</h2>
         <p style={{ margin: 0, opacity: 0.9, lineHeight: 1.6 }}>
-          I learn best by building hands-on. This project is my way to level up my skills and
-          eventually create something that could generate income.
+          I learn best by building hands-on. This project is my way to level up my skills.
         </p>
       </div>
     </main>
