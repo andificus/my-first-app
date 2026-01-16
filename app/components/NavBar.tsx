@@ -16,9 +16,7 @@ export default function NavBar() {
       setUserEmail(session?.user?.email ?? null)
     })
 
-    return () => {
-      sub.subscription.unsubscribe()
-    }
+    return () => sub.subscription.unsubscribe()
   }, [])
 
   const logout = async () => {
@@ -26,46 +24,76 @@ export default function NavBar() {
   }
 
   return (
-    <div
+    <header
       style={{
-        display: 'flex',
-        gap: 16,
-        alignItems: 'center',
-        padding: '12px 20px',
-        borderBottom: '1px solid #e5e5e5',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        backdropFilter: 'blur(14px)',
+        background: 'rgba(255, 255, 255, 0.7)',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}
     >
-      {/* Brand / Home */}
-      <Link href="/" style={{ fontWeight: 700 }}>
-        My App
-      </Link>
-
-      {/* Primary nav */}
-      {userEmail && (
-        <>
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/profile">Profile</Link>
-        </>
-      )}
-
-      {/* Right side */}
-      <div
+      <nav
         style={{
-          marginLeft: 'auto',
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: '14px 24px',
           display: 'flex',
-          gap: 12,
           alignItems: 'center',
+          gap: 18,
         }}
       >
-        {userEmail ? (
-          <>
-            <span style={{ fontSize: 14, opacity: 0.8 }}>{userEmail}</span>
-            <button onClick={logout}>Log out</button>
-          </>
-        ) : (
-          <Link href="/login">Login</Link>
+        {/* Brand / Home */}
+        <Link
+          href="/"
+          style={{
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
+            fontSize: 16,
+            textDecoration: 'none',
+            color: '#0b0d12',
+          }}
+        >
+          My App
+        </Link>
+
+        {/* Primary nav (only when logged in) */}
+        {userEmail && (
+          <div style={{ display: 'flex', gap: 14 }}>
+            <Link href="/dashboard" className="navLink">
+              Dashboard
+            </Link>
+            <Link href="/profile" className="navLink">
+              Profile
+            </Link>
+          </div>
         )}
-      </div>
-    </div>
+
+        {/* Right side */}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
+          {userEmail ? (
+            <>
+              <span
+                style={{
+                  fontSize: 13,
+                  opacity: 0.7,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {userEmail}
+              </span>
+              <button className="btn btnGhost" onClick={logout}>
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className="btn btnPrimary">
+              Login
+            </Link>
+          )}
+        </div>
+      </nav>
+    </header>
   )
 }
