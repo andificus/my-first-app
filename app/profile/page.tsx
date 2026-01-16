@@ -44,7 +44,10 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(emptyProfile)
   const [initialProfile, setInitialProfile] = useState<Profile>(emptyProfile)
   const [userId, setUserId] = useState<string | null>(null)
-
+  const [currentEmail, setCurrentEmail] = useState<string>('')
+  const [newEmail, setNewEmail] = useState<string>('')
+  const [updatingEmail, setUpdatingEmail] = useState(false)
+  
   const statusTimer = useRef<number | null>(null)
   const clearStatusSoon = (ms = 2500) => {
     if (statusTimer.current) window.clearTimeout(statusTimer.current)
@@ -87,6 +90,7 @@ export default function ProfilePage() {
       }
 
       setUserId(session.user.id)
+      setCurrentEmail(session.user.email ?? '')
 
       const { data, error } = await supabase
         .from('profiles')
@@ -168,6 +172,35 @@ export default function ProfilePage() {
     clearStatusSoon()
   }
 
+  // Update Email
+  const updateEmail = async () => {
+  const email = newEmail.trim()
+  if (!email) {
+    setStatus({ type: 'error', msg: 'Enter a new email address.' })
+    return
+  }
+
+  setUpdatingEmail(true)
+  setStatus({ type: 'info', msg: 'Sending confirmation email…' })
+
+  const { error } = await supabase.auth.updateUser({ email })
+
+  setUpdatingEmail(false)
+
+  if (error) {
+    setStatus({ type: 'error', msg: error.message })
+    return
+  }
+
+  setStatus({
+    type: 'success',
+    msg: 'Check your email to confirm the change. It won’t update until confirmed.',
+  })
+  setNewEmail('')
+  clearStatusSoon(5000)
+}
+
+
   const save = async () => {
     if (!userId) return
     if (!dirty) {
@@ -231,12 +264,13 @@ export default function ProfilePage() {
         setStatus({
           type: 'error',
           msg: 'That username is already taken. Please choose another.',
-      })
-    } else {
-      setStatus({ type: 'error', msg: error.message })
+        })
+      } else {
+        setStatus({ type: 'error', msg: error.message })
+      }
+      return
     }
-    return
-  }
+
 
 
     const saved: Profile = {
@@ -270,6 +304,47 @@ export default function ProfilePage() {
         <p>{status.msg}</p>
       ) : (
         <div style={{ border: '1px solid #e5e5e5', borderRadius: 16, padding: 20 }}>
+          
+          {/* ===== My Account (Auth) ===== */}
+          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>My Account</div>
+          
+            <div style={{ fontSize: 13, color: '#444', marginBottom: 10 }}>
+              Current email:{' '}
+              <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
+            </div>
+          
+            <label style={{ display: 'block', marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>New email</div>
+              <input
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+                placeholder="new@email.com"
+                autoComplete="email"
+              />
+            </label>
+          
+            <button
+              onClick={updateEmail}
+              disabled={updatingEmail || !newEmail.trim()}
+              style={{
+                padding: '10px 14px',
+                borderRadius: 10,
+                border: '1px solid #ccc',
+                background: updatingEmail ? '#f5f5f5' : '#fff',
+                cursor: updatingEmail ? 'not-allowed' : 'pointer',
+                fontWeight: 600,
+              }}
+            >
+              {updatingEmail ? 'Updating…' : 'Update email'}
+            </button>
+          
+            <div style={{ fontSize: 12, color: '#777', marginTop: 8 }}>
+              You’ll get a confirmation email before the change takes effect.
+            </div>
+          </div>
+
           {/* ===== Avatar ===== */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 20 }}>
             <img
