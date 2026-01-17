@@ -13,6 +13,7 @@ type Profile = {
   theme: 'system' | 'light' | 'dark' | null
   timezone: string | null
 }
+type Theme = 'system' | 'light' | 'dark'
 
 const MAX_NAME = 80
 const MAX_BIO = 500
@@ -473,7 +474,7 @@ export default function ProfilePage() {
               <select
                 value={profile.theme ?? 'system'}
                 onChange={(e) => {
-                  const t = (e.target.value as 'system' | 'light' | 'dark') ?? 'system'
+                  const t = (e.target.value as Theme
                   setProfile((p) => ({ ...p, theme: t }))
 
                   // apply instantly (even before saving)
