@@ -523,9 +523,10 @@ export default function ProfilePage() {
               disabled={saving || !dirty}
               style={{
                 padding: '10px 14px',
-                borderRadius: 10,
+                borderRadius: 10px,
                 border: '1px solid var(--border)',
                 background: 'var(--btn-bg)',
+                color: 'var(--btn-text)',
                 cursor: saving || !dirty ? 'not-allowed' : 'pointer',
                 fontWeight: 600,
               }}
