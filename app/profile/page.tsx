@@ -473,7 +473,7 @@ export default function ProfilePage() {
               <select
                 value={profile.theme ?? 'system'}
                 onChange={(e) => {
-                  const t = e.target.value as Profile['theme']
+                  const t = (e.target.value as 'system' | 'light' | 'dark') ?? 'system'
                   setProfile((p) => ({ ...p, theme: t }))
 
                   // apply instantly (even before saving)
