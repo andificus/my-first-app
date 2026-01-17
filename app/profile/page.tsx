@@ -379,7 +379,14 @@ export default function ProfilePage() {
               <input
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+                style={{
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
                 placeholder="new@email.com"
                 autoComplete="email"
               />
