@@ -472,7 +472,20 @@ export default function ProfilePage() {
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Theme</div>
               <select
                 value={profile.theme ?? 'system'}
-                onChange={(e) => setProfile((p) => ({ ...p, theme: e.target.value as Profile['theme'] }))}
+                onChange={(e) => {
+                  const t = e.target.value as Profile['theme']
+                  setProfile((p) => ({ ...p, theme: t }))
+
+                  // apply instantly (even before saving)
+                  const root = document.documentElement
+                  if (t === 'system') {
+                    const isDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+                    root.dataset.theme = isDark ? 'dark' : 'light'
+                  } else {
+                    root.dataset.theme = t
+                  }
+                }}
+
                 style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
               >
                 <option value="system">System</option>
