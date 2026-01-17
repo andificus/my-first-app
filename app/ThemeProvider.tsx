@@ -18,10 +18,8 @@ function applyTheme(theme: Theme) {
 
 export default function ThemeProvider() {
   useEffect(() => {
-    let unsub: { subscription: { unsubscribe: () => void } } | null = null
-
     const load = async () => {
-      // default for logged-out users
+      // logged-out default
       applyTheme('system')
 
       const { data } = await supabase.auth.getSession()
@@ -34,32 +32,10 @@ export default function ThemeProvider() {
         .eq('user_id', user.id)
         .maybeSingle()
 
-      const t = (profile?.theme as Theme) ?? 'system'
-      applyTheme(t)
+      applyTheme((profile?.theme as Theme) ?? 'system')
     }
 
     load()
-
-    // If user logs in/out in another tab, re-apply theme
-    unsub = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!session) {
-        applyTheme('system')
-        return
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('theme')
-        .eq('user_id', session.user.id)
-        .maybeSingle()
-
-      const t = (profile?.theme as Theme) ?? 'system'
-      applyTheme(t)
-    }).data
-
-    return () => {
-      unsub?.subscription.unsubscribe()
-    }
   }, [])
 
   return null
