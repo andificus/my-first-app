@@ -523,7 +523,7 @@ export default function ProfilePage() {
               disabled={saving || !dirty}
               style={{
                 padding: '10px 14px',
-                borderRadius: 10px,
+                borderRadius: 10,
                 border: '1px solid var(--border)',
                 background: 'var(--btn-bg)',
                 color: 'var(--btn-text)',
