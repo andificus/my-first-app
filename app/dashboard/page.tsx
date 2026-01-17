@@ -71,6 +71,12 @@ export default function DashboardPage() {
           >
             Edit Profile
           </Link>
+          <Link
+            href="/reset-password"
+            style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc', textDecoration: 'none' }}
+          >
+            Change Password
+          </Link>
           <button onClick={signOut} style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc' }}>
             Log out
           </button>
