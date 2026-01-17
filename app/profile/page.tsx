@@ -524,8 +524,8 @@ export default function ProfilePage() {
               style={{
                 padding: '10px 14px',
                 borderRadius: 10,
-                border: '1px solid #ccc',
-                background: saving || !dirty ? '#f5f5f5' : '#fff',
+                border: '1px solid var(--border)',
+                background: 'var(--btn-bg)',
                 cursor: saving || !dirty ? 'not-allowed' : 'pointer',
                 fontWeight: 600,
               }}
