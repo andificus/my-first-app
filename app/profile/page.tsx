@@ -72,7 +72,7 @@ export default function ProfilePage() {
 
     // ✅ Apply theme immediately when user changes dropdown
   useEffect(() => {
-    const t = profile.theme ?? 'system'
+    const t: 'system' | 'light' | 'dark' = profile.theme ?? 'system'
     const root = document.documentElement
 
     if (t === 'system') {
@@ -82,6 +82,7 @@ export default function ProfilePage() {
       root.dataset.theme = t
     }
   }, [profile.theme])
+
 
 
   useEffect(() => {
