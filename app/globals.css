@@ -2,12 +2,22 @@
 
 /* Elegant baseline */
 :root {
-  color-scheme: light;
+  --bg: #ffffff;
+  --text: #111111;
+  --card: #ffffff;
+  --border: #e5e5e5;
+}
+
+html[data-theme="dark"] {
+  --bg: #0b0d10;
+  --text: #f2f2f2;
+  --card: #11151b;
+  --border: #2a2f3a;
 }
 
 body {
-  background: #fbfbfc;
-  color: #0b0d12;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* Reusable components */
