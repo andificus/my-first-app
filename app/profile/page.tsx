@@ -69,6 +69,20 @@ export default function ProfilePage() {
     return keys.some((k) => (profile[k] ?? '') !== (initialProfile[k] ?? ''))
   }, [profile, initialProfile])
 
+    // ✅ Apply theme immediately when user changes dropdown
+  useEffect(() => {
+    const t = profile.theme ?? 'system'
+    const root = document.documentElement
+
+    if (t === 'system') {
+      const isDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+      root.dataset.theme = isDark ? 'dark' : 'light'
+    } else {
+      root.dataset.theme = t
+    }
+  }, [profile.theme])
+
+
   useEffect(() => {
     const load = async () => {
       setLoading(true)
