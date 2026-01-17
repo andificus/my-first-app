@@ -311,7 +311,7 @@ export default function ProfilePage() {
     <main style={{ padding: 40, maxWidth: 720, margin: '0 auto' }}>
       <div style={{ marginBottom: 16 }}>
         <h1 style={{ margin: 0 }}>Profile</h1>
-        <p style={{ marginTop: 8, color: '#666' }}>Update your profile details.</p>
+        <p style={{ marginTop: 8, color: 'var(--muted)' }}>Update your profile details.</p>
       </div>
 
       {loading ? (
@@ -319,7 +319,7 @@ export default function ProfilePage() {
       ) : !userId ? (
         <p>{status.msg}</p>
       ) : (
-        <div style={{ border: '1px solid #e5e5e5', borderRadius: 16, padding: 20 }}>
+        <div style={{ border: '1px solid var(--border)', borderRadius: 16, padding: 20, background: 'var(--card)', color: 'var(--text)' }}>
 
           {/* ===== Avatar ===== */}
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 20 }}>
@@ -331,7 +331,7 @@ export default function ProfilePage() {
                 height: 72,
                 borderRadius: 999,
                 objectFit: 'cover',
-                border: '1px solid #ddd',
+                border: '1px solid var(--border)',
               }}
             />
             <div>
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                   if (f) uploadAvatar(f)
                 }}
               />
-              <div style={{ fontSize: 12, color: '#777', marginTop: 6 }}>PNG/JPG recommended.</div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>PNG/JPG recommended.</div>
             </div>
           </div>
 
@@ -368,8 +368,8 @@ export default function ProfilePage() {
             </div>
           </label>
                     {/* ===== My Account (Auth) ===== */}
-          <div style={{ marginBottom: 20, border: '1px solid #eee', borderRadius: 16, padding: 16 }}>        
-            <div style={{ fontSize: 13, color: '#444', marginBottom: 10 }}>
+          <div style={{ marginBottom: 20, border: '1px solid var(--border)', borderRadius: 16, padding: 16, background: 'var(--card)' }}>       
+            <div style={{ fontSize: 13, color: 'var(--text)', marginBottom: 10 }}>
               Current email:{' '}
               <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
             </div>
