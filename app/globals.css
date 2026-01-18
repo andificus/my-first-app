@@ -185,6 +185,135 @@ body {
   }
 }
 
+/* Navbar: layout helpers for logged-in state */
+.navbarLinks {
+  display: flex;
+  gap: 14px;
+}
+
+/* Right side wrapper (replaces inline styles) */
+.navbarRight {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Better focus for nav links + buttons */
+.navLink:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* Avatar dropdown */
+.avatarMenuWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.avatarButton {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+  box-shadow:
+    0 10px 22px var(--shadow),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+.avatarButton:hover {
+  transform: translateY(-1px);
+}
+
+.avatarButton:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
+
+.avatarImg {
+  border-radius: 999px;
+}
+
+.avatarInitials {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.userMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 250px;
+  padding: 12px;
+  border-radius: 16px;
+}
+
+.userMenuHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 4px 10px 4px;
+}
+
+.userMenuName {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.userMenuEmail {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.userMenuDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+
+.userMenuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 10px;
+  border-radius: 12px;
+
+  text-decoration: none;
+  color: var(--text);
+
+  border: 1px solid transparent;
+  background: transparent;
+
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.userMenuItem:hover {
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+}
+
+.userMenuItem:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
 /* Logged-in email */
 .navbarEmail {
   font-size: 13px;
