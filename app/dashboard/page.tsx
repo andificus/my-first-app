@@ -66,7 +66,7 @@ export default function DashboardPage() {
 
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <Link href="/profile" className="btn btnGhost" style={{ borderRadius: 8 }}>
-            Edit Profile
+            Manage Profile
           </Link>
           <Link href="/reset-password" className="btn btnGhost" style={{ borderRadius: 8 }}>
             Change Password
