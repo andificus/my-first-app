@@ -1,255 +1,107 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { supabase } from '../../lib/supabaseClient'
 
-export default function Home() {
+type Profile = { full_name: string | null; bio: string | null }
+
+export default function DashboardPage() {
+  const router = useRouter()
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+
+      const { data } = await supabase.auth.getSession()
+      const session = data.session
+
+      if (!session) {
+        router.replace('/login')
+        return
+      }
+
+      setUserEmail(session.user.email ?? null)
+      setUserId(session.user.id)
+
+      const { data: p } = await supabase
+        .from('profiles')
+        .select('full_name, bio')
+        .eq('user_id', session.user.id)
+        .maybeSingle()
+
+      setProfile(p ?? { full_name: null, bio: null })
+      setLoading(false)
+    }
+
+    load()
+  }, [router])
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
+    router.replace('/login')
+  }
+
+  if (loading) {
+    return <main style={{ padding: 40 }}>Loading…</main>
+  }
+
+  const displayName = profile?.full_name?.trim() ? profile.full_name : userEmail
+  const profileComplete = Boolean(profile?.full_name?.trim() && profile?.bio?.trim())
+
   return (
-    <main
-      style={{
-        maxWidth: 980,
-        margin: '0 auto',
-        padding: '72px 28px',
-      }}
-    >
-      {/* Hero */}
-      <section style={{ marginBottom: 44 }}>
-        <p style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12, opacity: 0.75 }}>
-          In active development
-        </p>
+    <main style={{ padding: 40, maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
+          <p style={{ marginTop: 0, color: 'var(--muted)' }}>
+            Welcome, <b>{displayName}</b>
+          </p>
+        </div>
 
-        <h1
-          style={{
-            fontSize: 54,
-            lineHeight: 1.05,
-            margin: '10px 0 14px',
-            letterSpacing: '-0.03em',
-          }}
-        >
-          Build with intent.
-        </h1>
-
-        <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
-          A modern web app I’m building hands-on to sharpen real-world skills: authentication, data, and a clean
-          foundation that’s ready to scale into bigger features.
-        </p>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-          <Link href="/dashboard" className="btn btnPrimary">
-            Open Dashboard
-          </Link>
-
-          <Link href="/profile" className="btn btnGhost">
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Link href="/profile" className="btn btnGhost" style={{ borderRadius: 8 }}>
             Manage Profile
           </Link>
+          <Link href="/reset-password" className="btn btnGhost" style={{ borderRadius: 8 }}>
+            Change Password
+          </Link>
         </div>
-      </section>
+      </div>
 
-      {/* Intro cards */}
-      <section
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: 26,
-        }}
-      >
-        <div className="card">
-          <h2 className="h2">What it is</h2>
-          <p className="p">
-            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the structure you’d
-            want before adding “real” features.
+      <div style={{ marginTop: 24, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
+          <h2 style={{ marginTop: 0 }}>Account</h2>
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
+            Signed in as:<br /><b>{userEmail}</b>
+          </p>
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
+            Status: {profileComplete ? 'Profile complete ✅' : 'Profile incomplete ⚠️'}
           </p>
         </div>
 
-        <div className="card">
-          <h2 className="h2">What I’m practicing</h2>
-          <ul className="list">
-            <li>Modern React + Next.js patterns</li>
-            <li>Auth + database workflows (Supabase)</li>
-            <li>Production deployment (GitHub → Vercel)</li>
-            <li>Product thinking, UX, and consistency</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h2 className="h2">What’s next</h2>
-          <p className="p">
-            Notes, a more capable dashboard, and a smoother mobile experience — shipped in small, steady iterations.
-          </p>
-        </div>
-      </section>
-
-      {/* Divider-ish spacing */}
-      <section style={{ marginTop: 30, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          Key capabilities
-        </h2>
-        <p className="p" style={{ marginTop: 8 }}>
-          The current build focuses on fundamentals: security, clarity, and a base that can evolve without rewrites.
-        </p>
-      </section>
-
-      {/* Key capabilities grid */}
-      <section
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: 28,
-        }}
-      >
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Authentication
-          </h3>
-          <ul className="list">
-            <li>Email/password sign-in</li>
-            <li>Session handling + protected routes</li>
-            <li>Password reset flow</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Profile system
-          </h3>
-          <ul className="list">
-            <li>Edit basic user details</li>
-            <li>Stored securely in the database</li>
-            <li>Designed to support future fields</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Dashboard foundation
-          </h3>
-          <ul className="list">
-            <li>Central place for app tools</li>
-            <li>Room for widgets + summaries</li>
-            <li>Navigation that stays consistent</li>
-          </ul>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          How it works
-        </h2>
-        <p className="p" style={{ marginTop: 8 }}>
-          Straightforward on purpose — the goal is a clean experience, not complexity.
-        </p>
-      </section>
-
-      <section
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: 28,
-        }}
-      >
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            1) Sign in
-          </h3>
-          <p className="p">Authenticate securely to access your personal workspace.</p>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            2) Set up your profile
-          </h3>
-          <p className="p">Add the basics now — more fields will be added as features mature.</p>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            3) Use the dashboard
-          </h3>
-          <p className="p">Everything routes through the dashboard so the app can grow without getting messy.</p>
-        </div>
-      </section>
-
-      {/* Roadmap */}
-      <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          Roadmap
-        </h2>
-        <p className="p" style={{ marginTop: 8 }}>
-          A simple plan: ship the essentials first, then add power features once the base is solid.
-        </p>
-      </section>
-
-      <section
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: 28,
-        }}
-      >
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Now
-          </h3>
-          <ul className="list">
-            <li>Polish login + reset flow</li>
-            <li>Improve profile UX</li>
-            <li>Mobile-friendly layout pass</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Next
-          </h3>
-          <ul className="list">
-            <li>Notes (create / edit / delete)</li>
-            <li>Dashboard widgets</li>
-            <li>Better navigation states</li>
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Later
-          </h3>
-          <ul className="list">
-            <li>Activity history</li>
-            <li>Settings + preferences</li>
-            <li>More advanced user roles (if needed)</li>
-          </ul>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          FAQ
-        </h2>
-      </section>
-
-      <section style={{ display: 'grid', gap: 16, marginBottom: 10 }}>
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Is this a public product?
-          </h3>
-          <p className="p">
-            Not yet. It’s a personal build that’s being shaped like a real app — clean structure, secure auth, and
-            intentional UX.
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
+          <h2 style={{ marginTop: 0 }}>Profile</h2>
+          <p style={{ margin: '8px 0' }}>Name: <b>{profile?.full_name ?? '—'}</b></p>
+          <p style={{ margin: '8px 0' }}>
+            Bio:<br /><span style={{ color: 'var(--text)' }}>{profile?.bio ?? '—'}</span>
           </p>
         </div>
 
-        <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            What’s the goal?
-          </h3>
-          <p className="p">
-            Practice building production-quality fundamentals: authentication, data modeling, UI consistency, and
-            deployment workflows.
-          </p>
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
+          <h2 style={{ marginTop: 0 }}>Next steps</h2>
+          <ol style={{ margin: 0, paddingLeft: 18, color: 'var(--muted)' }}>
+            <li>Add notes</li>
+            <li>Mobile styling</li>
+            <li>Pro feature toggle</li>
+          </ol>
         </div>
-      </section>
+      </div>
     </main>
   )
 }
