@@ -12,7 +12,7 @@ export default function Home() {
       {/* Hero */}
       <section style={{ marginBottom: 44 }}>
         <p style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12, opacity: 0.75 }}>
-          Personal project
+          In active development
         </p>
 
         <h1
@@ -23,15 +23,15 @@ export default function Home() {
             letterSpacing: '-0.03em',
           }}
         >
-          Build. Learn.
+          Build with intent.
         </h1>
 
         <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
-          A modern web app I’m building hands-on to expand my skill set.
+          A modern web app I’m building hands-on to sharpen real-world skills: authentication, data, and a clean
+          foundation that’s ready to scale into bigger features.
         </p>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-          {/* This will either work (if logged in) or redirect to login (if not) */}
           <Link href="/dashboard" className="btn btnPrimary">
             Go to Dashboard
           </Link>
@@ -53,29 +53,29 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What it is</h2>
           <p className="p">
-            A clean, secure foundation: authentication, user profiles, and a dashboard — built to grow into future
-            features.
+            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the kind of
+            structure you’d want before adding “real” features.
           </p>
         </div>
 
         <div className="card">
           <h2 className="h2">What I’m practicing</h2>
           <ul className="list">
-            <li>Modern React + Next.js</li>
-            <li>Auth + database (Supabase)</li>
-            <li>Deployment (GitHub → Vercel)</li>
-            <li>Product thinking + UX</li>
+            <li>Modern React + Next.js patterns</li>
+            <li>Auth + database workflows (Supabase)</li>
+            <li>Production deployment (GitHub → Vercel)</li>
+            <li>Product thinking, UX, and consistency</li>
           </ul>
         </div>
 
         <div className="card">
           <h2 className="h2">What’s next</h2>
           <p className="p">
-            Notes, a more advanced dashboard, mobile-friendly UI — and more to come.
+            Notes, a more capable dashboard, and a smoother mobile experience — with improvements shipped in small,
+            steady iterations.
           </p>
         </div>
       </section>
-
-   </main>
+    </main>
   )
 }
