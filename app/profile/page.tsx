@@ -360,7 +360,14 @@ export default function ProfilePage() {
                 }))
               }
               maxLength={MAX_USERNAME}
-              style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+              style={{
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
               placeholder="your_handle"
             />
             <div style={{ fontSize: 12, color: '#777', marginTop: 6 }}>
@@ -368,7 +375,7 @@ export default function ProfilePage() {
             </div>
           </label>
                     {/* ===== My Account (Auth) ===== */}
-          <div style={{ marginBottom: 20, border: '1px solid var(--border)', borderRadius: 16, padding: 16, background: 'var(--card)' }}>       
+          <div style={{ marginBottom: 20, border: '1px solid var(--input-border)', borderRadius: 16, padding: 16, background: 'var(--card)' }}>       
             <div style={{ fontSize: 13, color: 'var(--text)', marginBottom: 10 }}>
               Current email:{' '}
               <span style={{ fontFamily: 'monospace' }}>{currentEmail || '—'}</span>
@@ -409,7 +416,7 @@ export default function ProfilePage() {
               {updatingEmail ? 'Updating…' : 'Update email'}
             </button>
           
-            <div style={{ fontSize: 12, color: '#777', marginTop: 8 }}>
+            <div style={{ fontSize: 12, color: 'var(--btn-text)', marginTop: 8 }}>
               You’ll get a confirmation email before the change takes effect.
             </div>
           </div>
@@ -421,7 +428,14 @@ export default function ProfilePage() {
               value={profile.full_name ?? ''}
               onChange={(e) => setProfile((p) => ({ ...p, full_name: e.target.value }))}
               maxLength={MAX_NAME}
-              style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+              style={{
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
               autoComplete="name"
               placeholder="Your name"
             />
