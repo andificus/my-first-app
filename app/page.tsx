@@ -339,13 +339,6 @@ export default function Home() {
         </p>
       </div>
 
-      <style jsx>{`
-        @media (max-width: 900px) {
-          section:first-of-type {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </main>
   )
 }
