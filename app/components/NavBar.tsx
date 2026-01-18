@@ -29,7 +29,7 @@ export default function NavBar() {
   }
 
   return (
-    <header
+    <header className="navbar"
       style={{
         position: 'sticky',
         top: 0,
