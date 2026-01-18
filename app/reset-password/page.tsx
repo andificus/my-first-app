@@ -29,21 +29,28 @@ export default function ResetPasswordPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 420, margin: '80px auto' }}>
-      <h1>Set a new password</h1>
+      <div className="card">
+        <h1 style={{ marginTop: 0 }}>Set a new password</h1>
 
-      <input
-        type="password"
-        placeholder="New password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: '100%', padding: 10, marginBottom: 14 }}
-      />
+        <input
+          type="password"
+          placeholder="New password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="input"
+          style={{ marginBottom: 14 }}
+        />
 
-      <button className="btn btnPrimary" onClick={updatePassword} style={{ width: '100%' }}>
-        Set password
-      </button>
+        <button className="btn btnPrimary" onClick={updatePassword} style={{ width: '100%' }}>
+          Set password
+        </button>
 
-      {message && <p style={{ marginTop: 14 }}>{message}</p>}
+        {message && (
+          <p style={{ marginTop: 14, color: 'var(--muted)' }}>
+            {message}
+          </p>
+        )}
+      </div>
     </main>
   )
 }
