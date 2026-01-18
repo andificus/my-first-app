@@ -41,7 +41,11 @@ export default function ResetPasswordPage() {
             style={{ marginBottom: 18 }}
         />
 
-        <button className="btn btnPrimary" onClick={updatePassword} style={{ width: '100%' }}>
+        <button
+          className="btn btnPrimary"
+          onClick={updatePassword}
+          style={{ width: '100%' }}
+        >
           Set password
         </button>
 
