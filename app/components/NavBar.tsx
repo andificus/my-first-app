@@ -2,68 +2,75 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
-type NavProfile = {
-  full_name: string | null
-  username: string | null
-  avatar_url: string | null
-}
-
 export default function NavBar() {
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const router = useRouter()
 
-  const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [displayName, setDisplayName] = useState<string | null>(null)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setUserEmail(data.session?.user?.email ?? null)
+    })
 
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement | null>(null)
-  const buttonRef = useRef<HTMLButtonElement | null>(null)
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserEmail(session?.user?.email ?? null)
+    })
 
-  const initials = useMemo(() => {
-    const base = (displayName || userEmail || '').trim()
-    if (!base) return '?'
+    return () => sub.subscription.unsubscribe()
+  }, [])
 
-    const handle = base.includes('@') ? base.split('@')[0] : base
-    const parts = handle.split(/[\s._-]+/).filter(Boolean)
-    const a = parts[0]?.[0] ?? handle[0] ?? '?'
-    const b = parts[1]?.[0] ?? handle[1] ?? ''
-    return (a + b).toUpperCase()
-  }, [displayName, userEmail])
-
-  const loadProfileForUser = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('full_name, username, avatar_url')
-      .eq('user_id', userId)
-      .maybeSingle<NavProfile>()
-
-    setDisplayName(data?.full_name || data?.username || null)
-    setAvatarUrl(data?.avatar_url || null)
+  const logout = async () => {
+    await supabase.auth.signOut()
+    setUserEmail(null)
+    router.push('/')
   }
 
-  useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase.auth.getSession()
-      const user = data.session?.user ?? null
+  return (
+    <header className="navbar">
+      <nav className="navbarInner">
+        {/* Brand / Home */}
+        <Link href="/" className="brandLink" aria-label="Andificus home">
+          <Image
+            src="/andificus-logo.png"
+            alt="Andificus"
+            width={180}
+            height={42}
+            priority
+            className="brandLogo"
+          />
+        </Link>
 
-      setUserEmail(user?.email ?? null)
-      setMenuOpen(false)
+        {/* Primary nav (only when logged in) */}
+        {userEmail && (
+          <div style={{ display: 'flex', gap: 14 }}>
+            <Link href="/dashboard" className="navLink">
+              Dashboard
+            </Link>
+            <Link href="/profile" className="navLink">
+              Profile
+            </Link>
+          </div>
+        )}
 
-      if (!user) {
-        setDisplayName(null)
-        setAvatarUrl(null)
-        return
-      }
-
-      await loadProfileForUser(user.id)
-    }
-
-    load()
-
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const user = session?.user ?? null
-      setUserEmail(user?.email ?? null)
+        {/* Right side */}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
+          {userEmail ? (
+            <>
+              <span className="navbarEmail">{userEmail}</span>
+              <button className="btn btnGhost" onClick={logout}>
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className="btn btnPrimary">
+              Login
+            </Link>
+          )}
+        </div>
+      </nav>
+    </header>
+  )
+}
