@@ -33,11 +33,11 @@ export default function Home() {
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
           <Link href="/dashboard" className="btn btnPrimary">
-            Go to Dashboard
+            Open Dashboard
           </Link>
 
           <Link href="/profile" className="btn btnGhost">
-            Edit Profile
+            Manage Profile
           </Link>
         </div>
       </section>
