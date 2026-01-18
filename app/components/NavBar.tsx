@@ -8,44 +8,57 @@ import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const router = useRouter()
-  const detailsRef = useRef<HTMLDetailsElement | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
-  
+  const router = useRouter()
+  const detailsRef = useRef<HTMLDetailsElement | null>(null)
+
+  const closeMenu = () => {
+    if (detailsRef.current) detailsRef.current.open = false
+  }
+
+  // ✅ define BEFORE useEffect (no "used before initialization" issues)
+  const loadAvatar = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('avatar_url')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (error) {
+      console.error('avatar load error:', error.message)
+      setAvatarUrl(null)
+      return
+    }
+
+    setAvatarUrl(data?.avatar_url ?? null)
+  }
+
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
+    const init = async () => {
+      const { data, error } = await supabase.auth.getSession()
+      if (error) console.error('getSession error:', error.message)
+
       const user = data.session?.user ?? null
       setUserEmail(user?.email ?? null)
-    
-      if (user) {
-        await loadAvatar(user.id)
-      } else {
-        setAvatarUrl(null)
-      }
-    })
 
+      if (user) await loadAvatar(user.id)
+      else setAvatarUrl(null)
+    }
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserEmail(session?.user?.email ?? null)
-      // close menu on auth changes
-      if (detailsRef.current) detailsRef.current.open = false
+    init()
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const user = session?.user ?? null
+      setUserEmail(user?.email ?? null)
+      closeMenu()
+
+      if (user) await loadAvatar(user.id)
+      else setAvatarUrl(null)
     })
 
     return () => sub.subscription.unsubscribe()
-  }, [])
-
-    const loadAvatar = async (userId: string) => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar_url')
-        .eq('user_id', userId)
-        .maybeSingle()
-    
-      if (!error) {
-        setAvatarUrl(data?.avatar_url ?? null)
-      }
-    }
+  }, []) // ok
 
   const initials = useMemo(() => {
     const email = (userEmail ?? '').trim()
@@ -57,25 +70,27 @@ export default function NavBar() {
     return (a + b).toUpperCase()
   }, [userEmail])
 
-  const closeMenu = () => {
-    if (detailsRef.current) detailsRef.current.open = false
-  }
-
   const logout = async () => {
+    // ✅ close menu first so click/focus can't interfere
+    closeMenu()
+
     const { error } = await supabase.auth.signOut()
     if (error) {
       console.error('signOut error:', error.message)
       return
     }
+
+    // ✅ clear local UI state
     setUserEmail(null)
-    closeMenu()
+    setAvatarUrl(null)
+
     router.push('/')
+    router.refresh()
   }
 
   return (
     <header className="navbar">
       <nav className="navbarInner">
-        {/* Brand / Home */}
         <Link href="/" className="brandLink" aria-label="Andificus home">
           <Image
             src="/andificus-logo.png"
@@ -87,7 +102,6 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Primary nav (only when logged in) */}
         {userEmail && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
@@ -99,25 +113,16 @@ export default function NavBar() {
           </div>
         )}
 
-        {/* Right side */}
         <div className="navbarRight">
           {userEmail ? (
             <details ref={detailsRef} className="userDropdown">
               <summary className="avatarButton" aria-label="Open user menu">
                 {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt="Avatar"
-                    className="avatarImg"
-                    width={32}
-                    height={32}
-                  />
+                  <img src={avatarUrl} alt="Avatar" className="avatarImg" width={32} height={32} />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
                 )}
               </summary>
-
-
 
               <div className="userMenu card" role="menu" aria-label="User menu">
                 <div className="userMenuHeader">
