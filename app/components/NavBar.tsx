@@ -136,7 +136,7 @@ export default function NavBar() {
         )}
 
         <div className="navbarRight">
-          {authLoading ? null : userEmail ? (
+          {userEmail ? (
             <details ref={detailsRef} className="userDropdown">
               <summary className="avatarButton" aria-label="Open user menu">
                 {avatarUrl ? (
@@ -145,24 +145,24 @@ export default function NavBar() {
                   <span className="avatarInitials">{initials}</span>
                 )}
               </summary>
-
+        
               <div className="userMenu card" role="menu" aria-label="User menu">
                 <div className="userMenuHeader">
                   <div className="userMenuName">Signed in</div>
                   <div className="userMenuEmail">{userEmail}</div>
                 </div>
-
+        
                 <div className="userMenuDivider" />
-
+        
                 <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={closeMenu}>
                   Dashboard
                 </Link>
                 <Link href="/profile" className="userMenuItem" role="menuitem" onClick={closeMenu}>
                   Profile
                 </Link>
-
+        
                 <div className="userMenuDivider" />
-
+        
                 <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
                   Log out
                 </button>
@@ -174,6 +174,7 @@ export default function NavBar() {
             </Link>
           )}
         </div>
+
       </nav>
     </header>
   )
