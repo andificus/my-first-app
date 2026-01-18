@@ -81,11 +81,14 @@ export default function NavBar() {
         <div className="navbarRight">
           {userEmail ? (
             <details ref={detailsRef} className="userDropdown">
-              <summary className="avatarButton" aria-label="Open user menu">
-                <span className="avatarInitials" aria-hidden="true">
-                  {initials}
-                </span>
+              <summary className="avatarButton">
+                {avatarUrl ? (
+                  <img src={avatarUrl} className="avatarImg" alt="Avatar" />
+                ) : (
+                  <span className="avatarInitials">{initials}</span>
+                )}
               </summary>
+
 
               <div className="userMenu card" role="menu" aria-label="User menu">
                 <div className="userMenuHeader">
