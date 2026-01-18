@@ -1,108 +1,209 @@
-/* Navbar layout helpers (no colors hard-coded) */
-.navbarLinks {
-  display: flex;
-  gap: 14px;
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { supabase } from '../../lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+
+type ProfileRow = {
+  avatar_url: string | null
+  full_name: string | null
+  username: string | null
 }
 
-.navbarRight {
-  margin-left: auto;
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
+export default function NavBar() {
+  const router = useRouter()
 
-/* Avatar dropdown */
-.avatarMenuWrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [displayName, setDisplayName] = useState<string | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
-.avatarButton {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 10px 22px var(--shadow);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-}
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const avatarButtonRef = useRef<HTMLButtonElement | null>(null)
 
-.avatarButton:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 3px;
-}
+  const initials = useMemo(() => {
+    const base = displayName || userEmail || ''
+    const cleaned = base.split('@')[0]?.trim() || ''
+    if (!cleaned) return '?'
+    const parts = cleaned.split(/[.\s_-]+/).filter(Boolean)
+    const first = parts[0]?.[0] ?? cleaned[0]
+    const second = parts[1]?.[0] ?? cleaned[1] ?? ''
+    return (first + second).toUpperCase()
+  }, [displayName, userEmail])
 
-.avatarImg {
-  border-radius: 999px;
-}
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase.auth.getSession()
+      const sessionUser = data.session?.user ?? null
 
-.avatarInitials {
-  font-weight: 600;
-  color: var(--text);
-}
+      setUserEmail(sessionUser?.email ?? null)
 
-.userMenu {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  min-width: 240px;
-  padding: 12px;
-  border-radius: 16px;
-}
+      if (!sessionUser) {
+        setAvatarUrl(null)
+        setDisplayName(null)
+        return
+      }
 
-.userMenuHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px 4px 10px 4px;
-}
+      // Try to fetch profile info (optional)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('avatar_url, full_name, username')
+        .eq('id', sessionUser.id)
+        .maybeSingle<ProfileRow>()
 
-.userMenuName {
-  font-weight: 600;
-}
+      setAvatarUrl(profile?.avatar_url ?? null)
+      setDisplayName(profile?.full_name ?? profile?.username ?? null)
+    }
 
-.userMenuEmail {
-  color: var(--muted);
-  font-size: 0.92rem;
-}
+    load()
 
-.userMenuDivider {
-  height: 1px;
-  background: var(--border);
-  margin: 10px 0;
-}
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const sessionUser = session?.user ?? null
+      setUserEmail(sessionUser?.email ?? null)
 
-.userMenuItem {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--text);
-  border: 1px solid transparent;
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
+      if (!sessionUser) {
+        setAvatarUrl(null)
+        setDisplayName(null)
+        setMenuOpen(false)
+        return
+      }
 
-.userMenuItem:hover {
-  border-color: var(--border);
-}
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('avatar_url, full_name, username')
+        .eq('id', sessionUser.id)
+        .maybeSingle<ProfileRow>()
 
-.userMenuItem:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 2px;
-}
+      setAvatarUrl(profile?.avatar_url ?? null)
+      setDisplayName(profile?.full_name ?? profile?.username ?? null)
+    })
 
-.userMenuItem.danger {
-  color: var(--text);
+    return () => sub.subscription.unsubscribe()
+  }, [])
+
+  // Close on outside click
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (!menuRef.current) return
+      if (menuRef.current.contains(target)) return
+      if (avatarButtonRef.current?.contains(target)) return
+      setMenuOpen(false)
+    }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+
+    window.addEventListener('mousedown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  const logout = async () => {
+    await supabase.auth.signOut()
+    setUserEmail(null)
+    setAvatarUrl(null)
+    setDisplayName(null)
+    setMenuOpen(false)
+    router.push('/')
+  }
+
+  return (
+    <header className="navbar">
+      <nav className="navbarInner">
+        {/* Brand / Home */}
+        <Link href="/" className="brandLink" aria-label="Andificus home">
+          <Image
+            src="/andificus-logo.png"
+            alt="Andificus"
+            width={180}
+            height={42}
+            priority
+            className="brandLogo"
+          />
+        </Link>
+
+        {/* Primary nav (only when logged in) */}
+        {userEmail && (
+          <div className="navbarLinks">
+            <Link href="/dashboard" className="navLink">
+              Dashboard
+            </Link>
+            <Link href="/profile" className="navLink">
+              Profile
+            </Link>
+          </div>
+        )}
+
+        {/* Right side */}
+        <div className="navbarRight">
+          {userEmail ? (
+            <div className="avatarMenuWrap">
+              <button
+                ref={avatarButtonRef}
+                type="button"
+                className="avatarButton"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                aria-label="Open user menu"
+              >
+                {avatarUrl ? (
+                  // If you store full URL, use it directly. If you store just a path, adapt here.
+                  // Keep Next Image for optimization.
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName || userEmail || 'User'}
+                    width={32}
+                    height={32}
+                    className="avatarImg"
+                  />
+                ) : (
+                  <span className="avatarInitials" aria-hidden="true">
+                    {initials}
+                  </span>
+                )}
+              </button>
+
+              {menuOpen && (
+                <div ref={menuRef} className="userMenu card" role="menu" aria-label="User menu">
+                  <div className="userMenuHeader">
+                    <div className="userMenuName">{displayName || 'Signed in'}</div>
+                    <div className="userMenuEmail">{userEmail}</div>
+                  </div>
+
+                  <div className="userMenuDivider" />
+
+                  <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Profile
+                  </Link>
+
+                  <div className="userMenuDivider" />
+
+                  <button type="button" className="userMenuItem danger" role="menuitem" onClick={logout}>
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className="btn btnPrimary">
+              Login
+            </Link>
+          )}
+        </div>
+      </nav>
+    </header>
+  )
 }
