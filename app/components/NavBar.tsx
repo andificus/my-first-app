@@ -9,16 +9,16 @@ import { useRouter } from 'next/navigation'
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
 
   const router = useRouter()
   const detailsRef = useRef<HTMLDetailsElement | null>(null)
 
-  const closeMenu = () => {
+  function closeMenu() {
     if (detailsRef.current) detailsRef.current.open = false
   }
 
-  const loadAvatar = async (userId: string) => {
+  // ✅ function declaration is hoisted (won’t crash on refresh)
+  async function loadAvatar(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
       .select('avatar_url')
@@ -38,8 +38,6 @@ export default function NavBar() {
     let cancelled = false
 
     const init = async () => {
-      setAuthLoading(true)
-
       try {
         const { data, error } = await supabase.auth.getSession()
         if (error) console.error('getSession error:', error.message)
@@ -56,8 +54,6 @@ export default function NavBar() {
         if (cancelled) return
         setUserEmail(null)
         setAvatarUrl(null)
-      } finally {
-        if (!cancelled) setAuthLoading(false)
       }
     }
 
@@ -72,9 +68,6 @@ export default function NavBar() {
 
       if (user) await loadAvatar(user.id)
       else setAvatarUrl(null)
-
-      // make sure we’re not stuck “loading” after auth changes
-      setAuthLoading(false)
     })
 
     return () => {
@@ -94,7 +87,10 @@ export default function NavBar() {
   }, [userEmail])
 
   const logout = async () => {
+    // close first (details UI)
     closeMenu()
+
+    console.log('logout clicked') // ✅ temporarily keep this for debugging
 
     const { error } = await supabase.auth.signOut()
     if (error) {
@@ -123,8 +119,7 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Show logged-in links when auth is resolved and user exists */}
-        {!authLoading && userEmail && (
+        {userEmail && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
               Dashboard
@@ -145,24 +140,24 @@ export default function NavBar() {
                   <span className="avatarInitials">{initials}</span>
                 )}
               </summary>
-        
+
               <div className="userMenu card" role="menu" aria-label="User menu">
                 <div className="userMenuHeader">
                   <div className="userMenuName">Signed in</div>
                   <div className="userMenuEmail">{userEmail}</div>
                 </div>
-        
+
                 <div className="userMenuDivider" />
-        
+
                 <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={closeMenu}>
                   Dashboard
                 </Link>
                 <Link href="/profile" className="userMenuItem" role="menuitem" onClick={closeMenu}>
                   Profile
                 </Link>
-        
+
                 <div className="userMenuDivider" />
-        
+
                 <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
                   Log out
                 </button>
@@ -174,7 +169,6 @@ export default function NavBar() {
             </Link>
           )}
         </div>
-
       </nav>
     </header>
   )
