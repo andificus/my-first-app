@@ -76,12 +76,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ marginTop: 56, paddingTop: 22, borderTop: '1px solid rgba(0,0,0,0.08)', opacity: 0.75 }}>
-        <p style={{ margin: 0, fontSize: 13 }}>
-          Built by Andificus.
-        </p>
-      </footer>
-    </main>
+   </main>
   )
 }
