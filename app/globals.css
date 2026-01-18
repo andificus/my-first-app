@@ -214,6 +214,13 @@ body {
   align-items: center;
 }
 
+.avatarImg {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 999px;
+}
+
 .avatarButton {
   width: 38px;
   height: 38px;
