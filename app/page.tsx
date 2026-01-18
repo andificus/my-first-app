@@ -42,19 +42,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cards */}
+      {/* Intro cards */}
       <section
         style={{
           display: 'grid',
           gap: 16,
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          marginBottom: 26,
         }}
       >
         <div className="card">
           <h2 className="h2">What it is</h2>
           <p className="p">
-            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the kind of
-            structure you’d want before adding “real” features.
+            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the structure you’d
+            want before adding “real” features.
           </p>
         </div>
 
@@ -71,8 +72,181 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What’s next</h2>
           <p className="p">
-            Notes, a more capable dashboard, and a smoother mobile experience — with improvements shipped in small,
-            steady iterations.
+            Notes, a more capable dashboard, and a smoother mobile experience — shipped in small, steady iterations.
+          </p>
+        </div>
+      </section>
+
+      {/* Divider-ish spacing */}
+      <section style={{ marginTop: 30, marginBottom: 18 }}>
+        <h2 className="h2" style={{ margin: 0 }}>
+          Key capabilities
+        </h2>
+        <p className="p" style={{ marginTop: 8 }}>
+          The current build focuses on fundamentals: security, clarity, and a base that can evolve without rewrites.
+        </p>
+      </section>
+
+      {/* Key capabilities grid */}
+      <section
+        style={{
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          marginBottom: 28,
+        }}
+      >
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Authentication
+          </h3>
+          <ul className="list">
+            <li>Email/password sign-in</li>
+            <li>Session handling + protected routes</li>
+            <li>Password reset flow</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Profile system
+          </h3>
+          <ul className="list">
+            <li>Edit basic user details</li>
+            <li>Stored securely in the database</li>
+            <li>Designed to support future fields</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Dashboard foundation
+          </h3>
+          <ul className="list">
+            <li>Central place for app tools</li>
+            <li>Room for widgets + summaries</li>
+            <li>Navigation that stays consistent</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section style={{ marginTop: 34, marginBottom: 18 }}>
+        <h2 className="h2" style={{ margin: 0 }}>
+          How it works
+        </h2>
+        <p className="p" style={{ marginTop: 8 }}>
+          Straightforward on purpose — the goal is a clean experience, not complexity.
+        </p>
+      </section>
+
+      <section
+        style={{
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          marginBottom: 28,
+        }}
+      >
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            1) Sign in
+          </h3>
+          <p className="p">Authenticate securely to access your personal workspace.</p>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            2) Set up your profile
+          </h3>
+          <p className="p">Add the basics now — more fields will be added as features mature.</p>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            3) Use the dashboard
+          </h3>
+          <p className="p">Everything routes through the dashboard so the app can grow without getting messy.</p>
+        </div>
+      </section>
+
+      {/* Roadmap */}
+      <section style={{ marginTop: 34, marginBottom: 18 }}>
+        <h2 className="h2" style={{ margin: 0 }}>
+          Roadmap
+        </h2>
+        <p className="p" style={{ marginTop: 8 }}>
+          A simple plan: ship the essentials first, then add power features once the base is solid.
+        </p>
+      </section>
+
+      <section
+        style={{
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          marginBottom: 28,
+        }}
+      >
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Now
+          </h3>
+          <ul className="list">
+            <li>Polish login + reset flow</li>
+            <li>Improve profile UX</li>
+            <li>Mobile-friendly layout pass</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Next
+          </h3>
+          <ul className="list">
+            <li>Notes (create / edit / delete)</li>
+            <li>Dashboard widgets</li>
+            <li>Better navigation states</li>
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Later
+          </h3>
+          <ul className="list">
+            <li>Activity history</li>
+            <li>Settings + preferences</li>
+            <li>More advanced user roles (if needed)</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ marginTop: 34, marginBottom: 18 }}>
+        <h2 className="h2" style={{ margin: 0 }}>
+          FAQ
+        </h2>
+      </section>
+
+      <section style={{ display: 'grid', gap: 16, marginBottom: 10 }}>
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            Is this a public product?
+          </h3>
+          <p className="p">
+            Not yet. It’s a personal build that’s being shaped like a real app — clean structure, secure auth, and
+            intentional UX.
+          </p>
+        </div>
+
+        <div className="card">
+          <h3 className="h2" style={{ marginTop: 0 }}>
+            What’s the goal?
+          </h3>
+          <p className="p">
+            Practice building production-quality fundamentals: authentication, data modeling, UI consistency, and
+            deployment workflows.
           </p>
         </div>
       </section>
