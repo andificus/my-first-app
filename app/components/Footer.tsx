@@ -7,16 +7,13 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-left">
-          <span className="brand">Andificus</span>
+          <span className="brand">Built By Andificus</span>
           <span className="copyright">
-            © {new Date().getFullYear()} Andificus. All rights reserved.
+            © {new Date().getFullYear()} All rights reserved.
           </span>
         </div>
 
         <div className="footer-right">
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/contact">Contact</Link>
         </div>
       </div>
     </footer>
