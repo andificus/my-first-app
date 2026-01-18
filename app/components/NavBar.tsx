@@ -104,9 +104,6 @@ export default function NavBar() {
             <Link href="/dashboard" className="navLink">
               Dashboard
             </Link>
-            <Link href="/profile" className="navLink">
-              Profile
-            </Link>
           </div>
         )}
 
