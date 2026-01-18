@@ -34,11 +34,11 @@ export default function ResetPasswordPage() {
 
         <input
           type="password"
-          placeholder="New password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="input"
-          style={{ marginBottom: 14 }}
+            placeholder="New password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input"
+            style={{ marginBottom: 18 }}
         />
 
         <button className="btn btnPrimary" onClick={updatePassword} style={{ width: '100%' }}>
