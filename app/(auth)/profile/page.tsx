@@ -5,8 +5,6 @@ import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 
-const router = useRouter()
-
 type Profile = {
   full_name: string | null
   bio: string | null
@@ -27,6 +25,7 @@ const normalizeUsername = (s: string) => s.trim().toLowerCase()
 const isValidUsername = (s: string) => /^[a-z0-9_]{3,20}$/.test(s)
 
 export default function ProfilePage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [status, setStatus] = useState<{ type: 'idle' | 'error' | 'success' | 'info'; msg: string }>({
@@ -140,12 +139,12 @@ export default function ProfilePage() {
 
     load()
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        setUserId(null)
-        setStatus({ type: 'info', msg: 'You must be logged in to view this page.' })
-      }
-    })
+    const session = sessionData.session
+    if (!session) {
+      router.replace('/login')
+      return
+    }
+
 
     return () => {
       sub.subscription.unsubscribe()
