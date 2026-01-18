@@ -35,8 +35,8 @@ export default function NavBar() {
         top: 0,
         zIndex: 50,
         backdropFilter: 'blur(14px)',
-        background: 'rgba(255, 255, 255, 0.7)',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
+        background: 'color-mix(in srgb, var(--card) 85%, transparent)',
+        borderBottom: '1px solid var(--border)',
       }}
     >
       <nav
@@ -57,7 +57,7 @@ export default function NavBar() {
             letterSpacing: '-0.02em',
             fontSize: 16,
             textDecoration: 'none',
-            color: '#0b0d12',
+            color: 'var(--text)',
           }}
         >
           My App
@@ -82,7 +82,7 @@ export default function NavBar() {
               <span
                 style={{
                   fontSize: 13,
-                  opacity: 0.7,
+                  color: 'var(--muted)',
                   whiteSpace: 'nowrap',
                 }}
               >
