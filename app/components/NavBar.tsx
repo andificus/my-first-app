@@ -10,11 +10,21 @@ export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const router = useRouter()
   const detailsRef = useRef<HTMLDetailsElement | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
+  
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setUserEmail(data.session?.user?.email ?? null)
+    supabase.auth.getSession().then(async ({ data }) => {
+      const user = data.session?.user ?? null
+      setUserEmail(user?.email ?? null)
+    
+      if (user) {
+        await loadAvatar(user.id)
+      } else {
+        setAvatarUrl(null)
+      }
     })
+
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserEmail(session?.user?.email ?? null)
@@ -24,6 +34,18 @@ export default function NavBar() {
 
     return () => sub.subscription.unsubscribe()
   }, [])
+
+    const loadAvatar = async (userId: string) => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('user_id', userId)
+        .maybeSingle()
+    
+      if (!error) {
+        setAvatarUrl(data?.avatar_url ?? null)
+      }
+    }
 
   const initials = useMemo(() => {
     const email = (userEmail ?? '').trim()
@@ -81,13 +103,20 @@ export default function NavBar() {
         <div className="navbarRight">
           {userEmail ? (
             <details ref={detailsRef} className="userDropdown">
-              <summary className="avatarButton">
+              <summary className="avatarButton" aria-label="Open user menu">
                 {avatarUrl ? (
-                  <img src={profile.avatarUrl} className="avatarImg" alt="Avatar" />
+                  <img
+                    src={avatarUrl}
+                    alt="Avatar"
+                    className="avatarImg"
+                    width={32}
+                    height={32}
+                  />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
                 )}
               </summary>
+
 
 
               <div className="userMenu card" role="menu" aria-label="User menu">
