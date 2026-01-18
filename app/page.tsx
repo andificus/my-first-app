@@ -65,9 +65,6 @@ export default function Home() {
               priority
             />
           </div>
-          <p className="p" style={{ marginTop: 12, marginBottom: 0 }}>
-            Replace this with a real dashboard screenshot later.
-          </p>
         </div>
       </section>
 
