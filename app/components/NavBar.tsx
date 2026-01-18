@@ -17,7 +17,6 @@ export default function NavBar() {
     if (detailsRef.current) detailsRef.current.open = false
   }
 
-  // ✅ function declaration is hoisted
   async function loadAvatar(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
@@ -34,7 +33,7 @@ export default function NavBar() {
     setAvatarUrl(data?.avatar_url ?? null)
   }
 
-  // ✅ hydration heartbeat MUST be top-level (not nested)
+  // debug heartbeat
   useEffect(() => {
     console.log('NavBar mounted (hydrated)')
   }, [])
