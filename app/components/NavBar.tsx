@@ -34,7 +34,7 @@ export default function NavBar() {
         {/* Brand / Home */}
         <Link href="/" className="brandLink" aria-label="Andificus home">
           <Image
-            src="/public/andificus-logo.png"
+            src="/andificus-logo.png"
             alt="Andificus"
             width={180}
             height={42}
