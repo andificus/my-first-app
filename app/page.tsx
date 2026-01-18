@@ -42,16 +42,7 @@ export default function Home() {
             foundation that’s ready to scale into bigger features.
           </p>
 
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-            <Link href="/dashboard" className="btn btnPrimary">
-              Open Dashboard
-            </Link>
 
-            <Link href="/profile" className="btn btnGhost">
-              Manage Profile
-            </Link>
-          </div>
-        </div>
 
         {/* Hero image (placeholder) */}
         <div className="card" style={{ padding: 14 }}>
