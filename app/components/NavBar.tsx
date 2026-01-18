@@ -10,6 +10,9 @@ export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
+  // ✅ add this
+  const [authLoading, setAuthLoading] = useState(true)
+
   const router = useRouter()
   const detailsRef = useRef<HTMLDetailsElement | null>(null)
 
@@ -17,7 +20,6 @@ export default function NavBar() {
     if (detailsRef.current) detailsRef.current.open = false
   }
 
-  // ✅ define BEFORE useEffect (no "used before initialization" issues)
   const loadAvatar = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -36,14 +38,19 @@ export default function NavBar() {
 
   useEffect(() => {
     const init = async () => {
-      const { data, error } = await supabase.auth.getSession()
-      if (error) console.error('getSession error:', error.message)
+      setAuthLoading(true)
 
-      const user = data.session?.user ?? null
+      // ✅ change getSession -> getUser (more reliable after refresh)
+      const { data, error } = await supabase.auth.getUser()
+      if (error) console.error('getUser error:', error.message)
+
+      const user = data.user ?? null
       setUserEmail(user?.email ?? null)
 
       if (user) await loadAvatar(user.id)
       else setAvatarUrl(null)
+
+      setAuthLoading(false)
     }
 
     init()
@@ -58,7 +65,7 @@ export default function NavBar() {
     })
 
     return () => sub.subscription.unsubscribe()
-  }, []) // ok
+  }, [])
 
   const initials = useMemo(() => {
     const email = (userEmail ?? '').trim()
@@ -71,7 +78,6 @@ export default function NavBar() {
   }, [userEmail])
 
   const logout = async () => {
-    // ✅ close menu first so click/focus can't interfere
     closeMenu()
 
     const { error } = await supabase.auth.signOut()
@@ -80,7 +86,6 @@ export default function NavBar() {
       return
     }
 
-    // ✅ clear local UI state
     setUserEmail(null)
     setAvatarUrl(null)
 
@@ -102,7 +107,8 @@ export default function NavBar() {
           />
         </Link>
 
-        {userEmail && (
+        {/* ✅ only show logged-in nav after auth init finishes */}
+        {!authLoading && userEmail && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
               Dashboard
@@ -114,7 +120,8 @@ export default function NavBar() {
         )}
 
         <div className="navbarRight">
-          {userEmail ? (
+          {/* ✅ only show dropdown after auth init finishes */}
+          {!authLoading && userEmail ? (
             <details ref={detailsRef} className="userDropdown">
               <summary className="avatarButton" aria-label="Open user menu">
                 {avatarUrl ? (
@@ -146,6 +153,9 @@ export default function NavBar() {
                 </button>
               </div>
             </details>
+          ) : authLoading ? (
+            // optional: tiny placeholder so layout doesn't jump
+            <span className="navbarEmail">Loading…</span>
           ) : (
             <Link href="/login" className="btn btnPrimary">
               Login
