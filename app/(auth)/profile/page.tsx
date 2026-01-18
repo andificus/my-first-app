@@ -89,55 +89,16 @@ export default function ProfilePage() {
 
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      setStatus({ type: 'idle', msg: '' })
+  const load = async () => {
+    setLoading(true)
+    setStatus({ type: 'idle', msg: '' })
 
-      const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-      if (sessionErr) {
-        setStatus({ type: 'error', msg: sessionErr.message })
-        setLoading(false)
-        return
-      }
-
-      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (!session) {
-          setUserId(null)
-          router.replace('/login')
-        }
-      })
-
-      setUserId(session.user.id)
-      setCurrentEmail(session.user.email ?? '')
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name, bio, username, avatar_url, website, location, theme, timezone')
-        .eq('user_id', session.user.id)
-        .maybeSingle()
-
-      if (error) {
-        setStatus({ type: 'error', msg: error.message })
-      } else {
-        // ✅ IMPORTANT: store ALL fields (yours only kept full_name/bio)
-        const next: Profile = {
-          full_name: data?.full_name ?? '',
-          bio: data?.bio ?? '',
-          username: data?.username ?? '',
-          avatar_url: data?.avatar_url ?? '',
-          website: data?.website ?? '',
-          location: data?.location ?? '',
-          theme: (data?.theme as Profile['theme']) ?? 'system',
-          timezone: data?.timezone ?? '',
-        }
-        setProfile(next)
-        setInitialProfile(next)
-      }
-
+    const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+    if (sessionErr) {
+      setStatus({ type: 'error', msg: sessionErr.message })
       setLoading(false)
+      return
     }
-
-    load()
 
     const session = sessionData.session
     if (!session) {
@@ -145,12 +106,50 @@ export default function ProfilePage() {
       return
     }
 
+    setUserId(session.user.id)
+    setCurrentEmail(session.user.email ?? '')
 
-    return () => {
-      sub.subscription.unsubscribe()
-      if (statusTimer.current) window.clearTimeout(statusTimer.current)
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('full_name, bio, username, avatar_url, website, location, theme, timezone')
+      .eq('user_id', session.user.id)
+      .maybeSingle()
+
+    if (error) {
+      setStatus({ type: 'error', msg: error.message })
+    } else {
+      const next: Profile = {
+        full_name: data?.full_name ?? '',
+        bio: data?.bio ?? '',
+        username: data?.username ?? '',
+        avatar_url: data?.avatar_url ?? '',
+        website: data?.website ?? '',
+        location: data?.location ?? '',
+        theme: (data?.theme as Profile['theme']) ?? 'system',
+        timezone: data?.timezone ?? '',
+      }
+      setProfile(next)
+      setInitialProfile(next)
     }
-  }, [])
+
+    setLoading(false)
+  }
+
+  load()
+
+  const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!session) {
+      setUserId(null)
+      router.replace('/login')
+    }
+  })
+
+  return () => {
+    sub.subscription.unsubscribe()
+    if (statusTimer.current) window.clearTimeout(statusTimer.current)
+  }
+}, [router])
+
 
   // ✅ ADD THIS: avatar upload function (goes near save)
   const uploadAvatar = async (file: File) => {
