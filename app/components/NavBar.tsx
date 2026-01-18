@@ -193,3 +193,36 @@ export default function NavBar() {
                   role="menu"
                   aria-label="User menu"
                   onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <div className="userMenuHeader">
+                    <div className="userMenuName">{displayName || 'Signed in'}</div>
+                    <div className="userMenuEmail">{userEmail}</div>
+                  </div>
+
+                  <div className="userMenuDivider" />
+
+                  <button type="button" className="userMenuItem" role="menuitem" onClick={() => go('/dashboard')}>
+                    Dashboard
+                  </button>
+                  <button type="button" className="userMenuItem" role="menuitem" onClick={() => go('/profile')}>
+                    Profile
+                  </button>
+
+                  <div className="userMenuDivider" />
+
+                  <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className="btn btnPrimary">
+              Login
+            </Link>
+          )}
+        </div>
+      </nav>
+    </header>
+  )
+}
