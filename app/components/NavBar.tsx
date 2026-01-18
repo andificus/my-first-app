@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const router = useRouter()
+  const detailsRef = useRef<HTMLDetailsElement | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -17,14 +18,35 @@ export default function NavBar() {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUserEmail(session?.user?.email ?? null)
+      // close menu on auth changes
+      if (detailsRef.current) detailsRef.current.open = false
     })
 
     return () => sub.subscription.unsubscribe()
   }, [])
 
+  const initials = useMemo(() => {
+    const email = (userEmail ?? '').trim()
+    if (!email) return '?'
+    const handle = email.split('@')[0] || email
+    const parts = handle.split(/[\s._-]+/).filter(Boolean)
+    const a = parts[0]?.[0] ?? handle[0] ?? '?'
+    const b = parts[1]?.[0] ?? handle[1] ?? ''
+    return (a + b).toUpperCase()
+  }, [userEmail])
+
+  const closeMenu = () => {
+    if (detailsRef.current) detailsRef.current.open = false
+  }
+
   const logout = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('signOut error:', error.message)
+      return
+    }
     setUserEmail(null)
+    closeMenu()
     router.push('/')
   }
 
@@ -45,7 +67,7 @@ export default function NavBar() {
 
         {/* Primary nav (only when logged in) */}
         {userEmail && (
-          <div style={{ display: 'flex', gap: 14 }}>
+          <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
               Dashboard
             </Link>
@@ -56,14 +78,37 @@ export default function NavBar() {
         )}
 
         {/* Right side */}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
+        <div className="navbarRight">
           {userEmail ? (
-            <>
-              <span className="navbarEmail">{userEmail}</span>
-              <button className="btn btnGhost" onClick={logout}>
-                Log out
-              </button>
-            </>
+            <details ref={detailsRef} className="userDropdown">
+              <summary className="avatarButton" aria-label="Open user menu">
+                <span className="avatarInitials" aria-hidden="true">
+                  {initials}
+                </span>
+              </summary>
+
+              <div className="userMenu card" role="menu" aria-label="User menu">
+                <div className="userMenuHeader">
+                  <div className="userMenuName">Signed in</div>
+                  <div className="userMenuEmail">{userEmail}</div>
+                </div>
+
+                <div className="userMenuDivider" />
+
+                <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={closeMenu}>
+                  Dashboard
+                </Link>
+                <Link href="/profile" className="userMenuItem" role="menuitem" onClick={closeMenu}>
+                  Profile
+                </Link>
+
+                <div className="userMenuDivider" />
+
+                <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
+                  Log out
+                </button>
+              </div>
+            </details>
           ) : (
             <Link href="/login" className="btn btnPrimary">
               Login
