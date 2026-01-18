@@ -17,6 +17,9 @@
 
   --input-bg: #ffffff;
   --input-border: rgba(0, 0, 0, 0.18);
+
+  --glass-highlight: rgba(255, 255, 255, 0.55);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
 }
 
 html[data-theme="dark"] {
@@ -35,6 +38,9 @@ html[data-theme="dark"] {
 
   --input-bg: #0f1318;
   --input-border: rgba(255, 255, 255, 0.18);
+
+  --glass-highlight: rgba(255, 255, 255, 0.10);
+  --glass-shadow: rgba(0, 0, 0, 0.55);
 }
 
 body {
