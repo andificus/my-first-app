@@ -17,7 +17,7 @@ export default function NavBar() {
     if (detailsRef.current) detailsRef.current.open = false
   }
 
-  // ✅ function declaration is hoisted (won’t crash on refresh)
+  // ✅ function declaration is hoisted
   async function loadAvatar(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
@@ -33,6 +33,11 @@ export default function NavBar() {
 
     setAvatarUrl(data?.avatar_url ?? null)
   }
+
+  // ✅ hydration heartbeat MUST be top-level (not nested)
+  useEffect(() => {
+    console.log('NavBar mounted (hydrated)')
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -70,10 +75,6 @@ export default function NavBar() {
       else setAvatarUrl(null)
     })
 
-    useEffect(() => {
-      console.log('NavBar mounted (hydrated)')
-    }, [])
-
     return () => {
       cancelled = true
       sub.subscription.unsubscribe()
@@ -91,10 +92,8 @@ export default function NavBar() {
   }, [userEmail])
 
   const logout = async () => {
-    // close first (details UI)
     closeMenu()
-
-    console.log('logout clicked') // ✅ temporarily keep this for debugging
+    console.log('logout clicked')
 
     const { error } = await supabase.auth.signOut()
     if (error) {
