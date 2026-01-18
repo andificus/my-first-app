@@ -289,7 +289,19 @@ body {
   opacity: 1;
 }
 
+.footer-right a {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
 
+.footer-right a:hover {
+  opacity: 1;
+}
+
+
+/* Not Footer*/
 @media (max-width: 900px) {
   .homeHero {
     grid-template-columns: 1fr !important;
