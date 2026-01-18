@@ -454,13 +454,13 @@ export default function ProfilePage() {
               onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
               maxLength={MAX_BIO}
               style={{
-                padding: 10,
-                width: '100%',
-                minHeight: 140,
-                borderRadius: 10,
-                border: '1px solid #ccc',
-                resize: 'vertical',
-              }}
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
               placeholder="Short bio…"
             />
             <div style={{ fontSize: 12, color: '#777', marginTop: 6 }}>
