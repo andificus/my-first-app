@@ -88,28 +88,6 @@ export default function NavBar() {
     return () => sub.subscription.unsubscribe()
   }, [])
 
-  // Close dropdown on outside click + Escape
-  useEffect(() => {
-    if (!menuOpen) return
-
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node
-      if (menuRef.current?.contains(target)) return
-      if (buttonRef.current?.contains(target)) return
-      setMenuOpen(false)
-    }
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false)
-    }
-
-    window.addEventListener('pointerdown', onPointerDown)
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      window.removeEventListener('pointerdown', onPointerDown)
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [menuOpen])
 
   const go = (path: string) => {
     setMenuOpen(false)
@@ -160,12 +138,23 @@ export default function NavBar() {
 
         <div className="navbarRight">
           {userEmail ? (
-            <div className="avatarMenuWrap">
+            <div
+              className="avatarMenuWrap"
+              tabIndex={-1}
+              onBlur={(e) => {
+                // If focus moved outside the wrap, close
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  setMenuOpen(false)
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setMenuOpen(false)
+              }}
+            >
               <button
                 ref={buttonRef}
                 type="button"
                 className="avatarButton"
-                onPointerDown={(e) => e.stopPropagation()}
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
@@ -185,37 +174,32 @@ export default function NavBar() {
                   </span>
                 )}
               </button>
-
+            
               {menuOpen && (
-                <div
-                  ref={menuRef}
-                  className="userMenu card"
-                  role="menu"
-                  aria-label="User menu"
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
+                <div ref={menuRef} className="userMenu card" role="menu" aria-label="User menu">
                   <div className="userMenuHeader">
                     <div className="userMenuName">{displayName || 'Signed in'}</div>
                     <div className="userMenuEmail">{userEmail}</div>
                   </div>
-
+            
                   <div className="userMenuDivider" />
-
+            
                   <button type="button" className="userMenuItem" role="menuitem" onClick={() => go('/dashboard')}>
                     Dashboard
                   </button>
                   <button type="button" className="userMenuItem" role="menuitem" onClick={() => go('/profile')}>
                     Profile
                   </button>
-
+            
                   <div className="userMenuDivider" />
-
+            
                   <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
                     Log out
                   </button>
                 </div>
               )}
             </div>
+
           ) : (
             <Link href="/login" className="btn btnPrimary">
               Login
