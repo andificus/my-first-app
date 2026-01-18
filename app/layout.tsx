@@ -5,6 +5,8 @@ import NavBar from './components/NavBar'
 import ThemeProvider from './ThemeProvider'
 import Footer from './components/Footer'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
