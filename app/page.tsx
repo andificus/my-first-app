@@ -12,6 +12,7 @@ export default function Home() {
     >
       {/* Hero */}
       <section
+        className="homeHero"
         style={{
           display: 'grid',
           gap: 24,
