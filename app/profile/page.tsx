@@ -462,7 +462,14 @@ export default function ProfilePage() {
             <input
               value={profile.website ?? ''}
               onChange={(e) => setProfile((p) => ({ ...p, website: e.target.value }))}
-              style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+              style={{
+                padding: 10,
+                width: '100%',
+                borderRadius: 10,
+                border: '1px solid var(--input-border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text)',
+              }}
               placeholder="https://example.com"
             />
           </label>
@@ -472,7 +479,14 @@ export default function ProfilePage() {
             <input
               value={profile.location ?? ''}
               onChange={(e) => setProfile((p) => ({ ...p, location: e.target.value }))}
-              style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+              style={{
+                padding: 10,
+                width: '100%',
+                borderRadius: 10,
+                border: '1px solid var(--input-border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text)',
+              }}
               placeholder="Rock Island, IL"
             />
           </label>
@@ -497,7 +511,14 @@ export default function ProfilePage() {
                   }
                 }}
 
-                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+                style={{
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
               >
                 <option value="system">System</option>
                 <option value="light">Light</option>
@@ -510,7 +531,14 @@ export default function ProfilePage() {
               <input
                 value={profile.timezone ?? ''}
                 onChange={(e) => setProfile((p) => ({ ...p, timezone: e.target.value }))}
-                style={{ padding: 10, width: '100%', borderRadius: 10, border: '1px solid #ccc' }}
+                style={{
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 10,
+                  border: '1px solid var(--input-border)',
+                  background: 'var(--input-bg)',
+                  color: 'var(--text)',
+                }}
                 placeholder="America/Chicago"
               />
             </label>
