@@ -54,7 +54,7 @@ export default function LoginPage() {
       password,
     })
 
-    setMessage(error ? error.message : 'Account created. Check your email to verify.')
+    setMessage(error ? error.message : 'Account created. Check your email to finish.')
   }
 
   return (
