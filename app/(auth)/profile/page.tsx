@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+
+
+const router = useRouter()
 
 type Profile = {
   full_name: string | null
@@ -97,13 +101,12 @@ export default function ProfilePage() {
         return
       }
 
-      const session = sessionData.session
-      if (!session) {
-        setStatus({ type: 'info', msg: 'You must be logged in to view this page.' })
-        setUserId(null)
-        setLoading(false)
-        return
-      }
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!session) {
+          setUserId(null)
+          router.replace('/login')
+        }
+      })
 
       setUserId(session.user.id)
       setCurrentEmail(session.user.email ?? '')
