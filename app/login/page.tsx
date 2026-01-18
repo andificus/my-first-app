@@ -31,13 +31,21 @@ export default function LoginPage() {
   }
 
   const resetPassword = async () => {
-    setMessage('')
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    })
+  setMessage('')
 
-    setMessage(error ? error.message : 'Check your email to set a password.')
+  // 👇 put it here
+  if (!email.trim()) {
+    setMessage('Enter your email first.')
+    return
   }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  })
+
+  setMessage(error ? error.message : 'Check your email to set a password.')
+}
+
 
   const signUp = async () => {
     setMessage('')
@@ -51,41 +59,47 @@ export default function LoginPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 420, margin: '80px auto' }}>
-      <h1>Sign in</h1>
+      <div className="card">
+        <h1 style={{ marginTop: 0 }}>Sign in</h1>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ width: '100%', padding: 10, marginBottom: 10 }}
-      />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="input"
+          style={{ marginBottom: 10 }}
+          autoComplete="email"
+        />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: '100%', padding: 10, marginBottom: 14 }}
-      />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="input"
+          style={{ marginBottom: 18 }}
+          autoComplete="current-password"
+        />
 
-      <button className="btn btnPrimary" onClick={signIn} style={{ width: '100%' }}>
-        Log in
-      </button>
+        <button className="btn btnPrimary" onClick={signIn} style={{ width: '100%' }}>
+          Log in
+        </button>
 
-      <button className="btn btnGhost" onClick={resetPassword} style={{width: '100%', marginTop: 10}}>
-        Forgot Pasword?  
-      </button>
-      
-      <button
-        className="btn btnGhost"
-        onClick={signUp}
-        style={{ width: '100%', marginTop: 10 }}
-      >
-        Create account
-      </button>
+        <button className="btn btnGhost" onClick={resetPassword} style={{ width: '100%', marginTop: 10 }}>
+          Forgot password?
+        </button>
 
-      {message && <p style={{ marginTop: 14 }}>{message}</p>}
+        <button className="btn btnGhost" onClick={signUp} style={{ width: '100%', marginTop: 10 }}>
+          Create account
+        </button>
+
+        {message && (
+          <p style={{ marginTop: 14, color: 'var(--muted)' }}>
+            {message}
+          </p>
+        )}
+      </div>
     </main>
   )
 }
