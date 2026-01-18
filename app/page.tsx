@@ -34,7 +34,7 @@ export default function Home() {
               letterSpacing: '-0.03em',
             }}
           >
-            Build with intent.
+            Built with intent.
           </h1>
 
           <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
@@ -80,7 +80,7 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What it is</h2>
           <p className="p">
-            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the structure
+            A focused starter webapp: secure sign-in, a user profile, and a dashboard — built with the structure
             before adding “real” features.
           </p>
         </div>
