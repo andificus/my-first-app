@@ -1,76 +1,108 @@
-'use client'
+/* Navbar layout helpers (no colors hard-coded) */
+.navbarLinks {
+  display: flex;
+  gap: 14px;
+}
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
-import { useRouter } from 'next/navigation'
+.navbarRight {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
 
-export default function NavBar() {
-  const [userEmail, setUserEmail] = useState<string | null>(null)
-  const router = useRouter()
+/* Avatar dropdown */
+.avatarMenuWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setUserEmail(data.session?.user?.email ?? null)
-    })
+.avatarButton {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 22px var(--shadow);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserEmail(session?.user?.email ?? null)
-    })
+.avatarButton:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+}
 
-    return () => sub.subscription.unsubscribe()
-  }, [])
+.avatarImg {
+  border-radius: 999px;
+}
 
-  const logout = async () => {
-    await supabase.auth.signOut()
-    setUserEmail(null)
-    router.push('/')
-  }
+.avatarInitials {
+  font-weight: 600;
+  color: var(--text);
+}
 
-  return (
-    <header className="navbar">
-      <nav className="navbarInner">
-        {/* Brand / Home */}
-        <Link href="/" className="brandLink" aria-label="Andificus home">
-          <Image
-            src="/andificus-logo.png"
-            alt="Andificus"
-            width={180}
-            height={42}
-            priority
-            className="brandLogo"
-          />
-        </Link>
+.userMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 240px;
+  padding: 12px;
+  border-radius: 16px;
+}
 
-        {/* Primary nav (only when logged in) */}
-        {userEmail && (
-          <div style={{ display: 'flex', gap: 14 }}>
-            <Link href="/dashboard" className="navLink">
-              Dashboard
-            </Link>
-            <Link href="/profile" className="navLink">
-              Profile
-            </Link>
-          </div>
-        )}
+.userMenuHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 4px 10px 4px;
+}
 
-        {/* Right side */}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
-          {userEmail ? (
-            <>
-              <span className="navbarEmail">{userEmail}</span>
-              <button className="btn btnGhost" onClick={logout}>
-                Log out
-              </button>
-            </>
-          ) : (
-            <Link href="/login" className="btn btnPrimary">
-              Login
-            </Link>
-          )}
-        </div>
-      </nav>
-    </header>
-  )
+.userMenuName {
+  font-weight: 600;
+}
+
+.userMenuEmail {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.userMenuDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+
+.userMenuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.userMenuItem:hover {
+  border-color: var(--border);
+}
+
+.userMenuItem:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.userMenuItem.danger {
+  color: var(--text);
 }
