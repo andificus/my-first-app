@@ -80,8 +80,8 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What it is</h2>
           <p className="p">
-            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the structure you’d
-            want before adding “real” features.
+            A focused starter product: secure sign-in, a user profile, and a dashboard — built with the structure
+            before adding “real” features.
           </p>
         </div>
 
@@ -98,7 +98,7 @@ export default function Home() {
         <div className="card">
           <h2 className="h2">What’s next</h2>
           <p className="p">
-            Notes, a more capable dashboard, and a smoother mobile experience — shipped in small, steady iterations.
+            Notes, a more capable dashboard, and a smoother mobile experience — in small, steady iterations.
           </p>
         </div>
       </section>
@@ -329,13 +329,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-
-      {/* Small responsive tweak (keeps layout without redesigning) */}
-      <div className="card" style={{ marginTop: 28 }}>
-        <p className="p" style={{ margin: 0 }}>
-          Tip: add your placeholder images under <strong>/public/images</strong>. This page is already wired to use them.
-        </p>
-      </div>
 
     </main>
   )
