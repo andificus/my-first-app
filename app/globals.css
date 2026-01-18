@@ -288,3 +288,10 @@ body {
 .footer a:hover {
   opacity: 1;
 }
+
+
+@media (max-width: 900px) {
+  .homeHero {
+    grid-template-columns: 1fr !important;
+  }
+}
