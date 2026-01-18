@@ -83,7 +83,7 @@ export default function NavBar() {
             <details ref={detailsRef} className="userDropdown">
               <summary className="avatarButton">
                 {avatarUrl ? (
-                  <img src={avatarUrl} className="avatarImg" alt="Avatar" />
+                  <img src={profile.avatarUrl} className="avatarImg" alt="Avatar" />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
                 )}
