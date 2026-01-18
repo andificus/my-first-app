@@ -8,56 +8,22 @@ import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-
   const router = useRouter()
   const detailsRef = useRef<HTMLDetailsElement | null>(null)
 
-  // ✅ define BEFORE useEffect (or make it a function declaration)
-  const loadAvatar = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('avatar_url')
-      .eq('user_id', userId)
-      .maybeSingle()
-
-    if (error) {
-      console.error('avatar load error:', error.message)
-      setAvatarUrl(null)
-      return
-    }
-
-    setAvatarUrl(data?.avatar_url ?? null)
-  }
-
   useEffect(() => {
-    const init = async () => {
-      const { data, error } = await supabase.auth.getSession()
-      if (error) console.error('getSession error:', error.message)
+    supabase.auth.getSession().then(({ data }) => {
+      setUserEmail(data.session?.user?.email ?? null)
+    })
 
-      const user = data.session?.user ?? null
-      setUserEmail(user?.email ?? null)
-
-      if (user) await loadAvatar(user.id)
-      else setAvatarUrl(null)
-    }
-
-    init()
-
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const user = session?.user ?? null
-      setUserEmail(user?.email ?? null)
-
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserEmail(session?.user?.email ?? null)
       // close menu on auth changes
       if (detailsRef.current) detailsRef.current.open = false
-
-      // ✅ keep avatar in sync
-      if (user) await loadAvatar(user.id)
-      else setAvatarUrl(null)
     })
 
     return () => sub.subscription.unsubscribe()
-  }, []) // ok to leave empty
+  }, [])
 
   const initials = useMemo(() => {
     const email = (userEmail ?? '').trim()
@@ -80,7 +46,6 @@ export default function NavBar() {
       return
     }
     setUserEmail(null)
-    setAvatarUrl(null)
     closeMenu()
     router.push('/')
   }
@@ -88,6 +53,7 @@ export default function NavBar() {
   return (
     <header className="navbar">
       <nav className="navbarInner">
+        {/* Brand / Home */}
         <Link href="/" className="brandLink" aria-label="Andificus home">
           <Image
             src="/andificus-logo.png"
@@ -99,24 +65,30 @@ export default function NavBar() {
           />
         </Link>
 
+        {/* Primary nav (only when logged in) */}
         {userEmail && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
               Dashboard
             </Link>
+            <Link href="/profile" className="navLink">
+              Profile
+            </Link>
           </div>
         )}
 
+        {/* Right side */}
         <div className="navbarRight">
           {userEmail ? (
             <details ref={detailsRef} className="userDropdown">
-              <summary className="avatarButton" aria-label="Open user menu">
+              <summary className="avatarButton">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="avatarImg" width={32} height={32} />
+                  <img src={avatarUrl} className="avatarImg" alt="Avatar" />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
                 )}
               </summary>
+
 
               <div className="userMenu card" role="menu" aria-label="User menu">
                 <div className="userMenuHeader">
