@@ -89,50 +89,69 @@ export default function ProfilePage() {
 
 
   useEffect(() => {
+  let cancelled = false
+
   const load = async () => {
     setLoading(true)
     setStatus({ type: 'idle', msg: '' })
 
-    const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-    if (sessionErr) {
-      setStatus({ type: 'error', msg: sessionErr.message })
-      setLoading(false)
-      return
-    }
-
-    const session = sessionData.session
-    if (!session) {
-      router.replace('/login')
-      return
-    }
-
-    setUserId(session.user.id)
-    setCurrentEmail(session.user.email ?? '')
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('full_name, bio, username, avatar_url, website, location, theme, timezone')
-      .eq('user_id', session.user.id)
-      .maybeSingle()
-
-    if (error) {
-      setStatus({ type: 'error', msg: error.message })
-    } else {
-      const next: Profile = {
-        full_name: data?.full_name ?? '',
-        bio: data?.bio ?? '',
-        username: data?.username ?? '',
-        avatar_url: data?.avatar_url ?? '',
-        website: data?.website ?? '',
-        location: data?.location ?? '',
-        theme: (data?.theme as Profile['theme']) ?? 'system',
-        timezone: data?.timezone ?? '',
+    try {
+      // 1) try session
+      const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+      if (sessionErr) {
+        console.error('getSession error:', sessionErr.message)
       }
-      setProfile(next)
-      setInitialProfile(next)
-    }
 
-    setLoading(false)
+      let user = sessionData.session?.user ?? null
+
+      // 2) fallback (helps on refresh race)
+      if (!user) {
+        const { data: userData, error: userErr } = await supabase.auth.getUser()
+        if (userErr) console.error('getUser error:', userErr.message)
+        user = userData.user ?? null
+      }
+
+      if (cancelled) return
+
+      if (!user) {
+        setLoading(false)              // ✅ stop Loading… before redirect
+        router.replace('/login')
+        return
+      }
+
+      setUserId(user.id)
+      setCurrentEmail(user.email ?? '')
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name, bio, username, avatar_url, website, location, theme, timezone')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (cancelled) return
+
+      if (error) {
+        setStatus({ type: 'error', msg: error.message })
+      } else {
+        const next: Profile = {
+          full_name: data?.full_name ?? '',
+          bio: data?.bio ?? '',
+          username: data?.username ?? '',
+          avatar_url: data?.avatar_url ?? '',
+          website: data?.website ?? '',
+          location: data?.location ?? '',
+          theme: (data?.theme as Profile['theme']) ?? 'system',
+          timezone: data?.timezone ?? '',
+        }
+        setProfile(next)
+        setInitialProfile(next)
+      }
+    } catch (e) {
+      console.error('profile load crash:', e)
+      if (!cancelled) setStatus({ type: 'error', msg: 'Failed to load profile.' })
+    } finally {
+      if (!cancelled) setLoading(false)
+    }
   }
 
   load()
@@ -140,11 +159,13 @@ export default function ProfilePage() {
   const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
     if (!session) {
       setUserId(null)
+      setLoading(false)               // ✅ ensure UI doesn’t stick
       router.replace('/login')
     }
   })
 
   return () => {
+    cancelled = true
     sub.subscription.unsubscribe()
     if (statusTimer.current) window.clearTimeout(statusTimer.current)
   }
