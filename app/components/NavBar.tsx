@@ -9,8 +9,6 @@ import { useRouter } from 'next/navigation'
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-
-  // ✅ add this
   const [authLoading, setAuthLoading] = useState(true)
 
   const router = useRouter()
@@ -37,34 +35,52 @@ export default function NavBar() {
   }
 
   useEffect(() => {
+    let cancelled = false
+
     const init = async () => {
       setAuthLoading(true)
 
-      // ✅ change getSession -> getUser (more reliable after refresh)
-      const { data, error } = await supabase.auth.getUser()
-      if (error) console.error('getUser error:', error.message)
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        if (error) console.error('getSession error:', error.message)
 
-      const user = data.user ?? null
-      setUserEmail(user?.email ?? null)
+        const user = data.session?.user ?? null
+        if (cancelled) return
 
-      if (user) await loadAvatar(user.id)
-      else setAvatarUrl(null)
+        setUserEmail(user?.email ?? null)
 
-      setAuthLoading(false)
+        if (user) await loadAvatar(user.id)
+        else setAvatarUrl(null)
+      } catch (e) {
+        console.error('navbar init crash:', e)
+        if (cancelled) return
+        setUserEmail(null)
+        setAvatarUrl(null)
+      } finally {
+        if (!cancelled) setAuthLoading(false)
+      }
     }
 
     init()
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const user = session?.user ?? null
+      if (cancelled) return
+
       setUserEmail(user?.email ?? null)
       closeMenu()
 
       if (user) await loadAvatar(user.id)
       else setAvatarUrl(null)
+
+      // make sure we’re not stuck “loading” after auth changes
+      setAuthLoading(false)
     })
 
-    return () => sub.subscription.unsubscribe()
+    return () => {
+      cancelled = true
+      sub.subscription.unsubscribe()
+    }
   }, [])
 
   const initials = useMemo(() => {
@@ -107,7 +123,7 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* ✅ only show logged-in nav after auth init finishes */}
+        {/* Show logged-in links when auth is resolved and user exists */}
         {!authLoading && userEmail && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
@@ -120,8 +136,7 @@ export default function NavBar() {
         )}
 
         <div className="navbarRight">
-          {/* ✅ only show dropdown after auth init finishes */}
-          {!authLoading && userEmail ? (
+          {authLoading ? null : userEmail ? (
             <details ref={detailsRef} className="userDropdown">
               <summary className="avatarButton" aria-label="Open user menu">
                 {avatarUrl ? (
@@ -153,9 +168,6 @@ export default function NavBar() {
                 </button>
               </div>
             </details>
-          ) : authLoading ? (
-            // optional: tiny placeholder so layout doesn't jump
-            <span className="navbarEmail">Loading…</span>
           ) : (
             <Link href="/login" className="btn btnPrimary">
               Login
