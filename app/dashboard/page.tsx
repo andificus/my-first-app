@@ -59,52 +59,43 @@ export default function DashboardPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
-          <p style={{ marginTop: 0, opacity: 0.8 }}>
+          <p style={{ marginTop: 0, color: 'var(--muted)' }}>
             Welcome, <b>{displayName}</b>
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <Link
-            href="/profile"
-            style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc', textDecoration: 'none' }}
-          >
+          <Link href="/profile" className="btn btnGhost" style={{ borderRadius: 8 }}>
             Edit Profile
           </Link>
-          <Link
-            href="/reset-password"
-            style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc', textDecoration: 'none' }}
-          >
+          <Link href="/reset-password" className="btn btnGhost" style={{ borderRadius: 8 }}>
             Change Password
           </Link>
-          <button onClick={signOut} style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid #ccc' }}>
-            Log out
-          </button>
         </div>
       </div>
 
       <div style={{ marginTop: 24, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-        <div style={{ padding: 18, border: '1px solid #e5e5e5', borderRadius: 12 }}>
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
           <h2 style={{ marginTop: 0 }}>Account</h2>
-          <p style={{ margin: '8px 0' }}>
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
             Signed in as:<br /><b>{userEmail}</b>
           </p>
-          <p style={{ margin: '8px 0', opacity: 0.8 }}>
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
             Status: {profileComplete ? 'Profile complete ✅' : 'Profile incomplete ⚠️'}
           </p>
         </div>
 
-        <div style={{ padding: 18, border: '1px solid #e5e5e5', borderRadius: 12 }}>
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
           <h2 style={{ marginTop: 0 }}>Profile</h2>
           <p style={{ margin: '8px 0' }}>Name: <b>{profile?.full_name ?? '—'}</b></p>
           <p style={{ margin: '8px 0' }}>
-            Bio:<br /><span style={{ opacity: 0.9 }}>{profile?.bio ?? '—'}</span>
+            Bio:<br /><span style={{ color: 'var(--text)' }}>{profile?.bio ?? '—'}</span>
           </p>
         </div>
 
-        <div style={{ padding: 18, border: '1px solid #e5e5e5', borderRadius: 12 }}>
+        <div className="card" style={{ padding: 18, borderRadius: 12 }}>
           <h2 style={{ marginTop: 0 }}>Next steps</h2>
-          <ol style={{ margin: 0, paddingLeft: 18, opacity: 0.9 }}>
+          <ol style={{ margin: 0, paddingLeft: 18, color: 'var(--muted)' }}>
             <li>Add notes</li>
             <li>Mobile styling</li>
             <li>Pro feature toggle</li>
