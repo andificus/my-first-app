@@ -15,36 +15,69 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let cancelled = false
+
     const load = async () => {
       setLoading(true)
 
-      const { data } = await supabase.auth.getSession()
-      const session = data.session
+      try {
+        // 1) try session
+        const { data: s1, error: sErr } = await supabase.auth.getSession()
+        if (sErr) console.error('getSession error:', sErr.message)
 
-      if (!session) {
-        router.replace('/login')
-        return
+        let user = s1.session?.user ?? null
+
+        // 2) fallback: user (helps on refresh race)
+        if (!user) {
+          const { data: u1, error: uErr } = await supabase.auth.getUser()
+          if (uErr) console.error('getUser error:', uErr.message)
+          user = u1.user ?? null
+        }
+
+        if (cancelled) return
+
+        if (!user) {
+          setLoading(false)            // ✅ stop Loading… before redirect
+          router.replace('/login')
+          return
+        }
+
+        setUserEmail(user.email ?? null)
+        setUserId(user.id)
+
+        const { data: p, error: pErr } = await supabase
+          .from('profiles')
+          .select('full_name, bio')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (pErr) console.error('profiles error:', pErr.message)
+
+        if (cancelled) return
+
+        setProfile(p ?? { full_name: null, bio: null })
+      } catch (e) {
+        console.error('dashboard load crash:', e)
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-
-      setUserEmail(session.user.email ?? null)
-      setUserId(session.user.id)
-
-      const { data: p } = await supabase
-        .from('profiles')
-        .select('full_name, bio')
-        .eq('user_id', session.user.id)
-        .maybeSingle()
-
-      setProfile(p ?? { full_name: null, bio: null })
-      setLoading(false)
     }
 
     load()
+
+    return () => {
+      cancelled = true
+    }
   }, [router])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    router.replace('/login')
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('signOut error:', error.message)
+      return
+    }
+    // ✅ hard redirect = reliable even if router/hydration is flaky
+    window.location.href = '/login'
   }
 
   if (loading) {
@@ -71,6 +104,9 @@ export default function DashboardPage() {
           <Link href="/reset-password" className="btn btnGhost" style={{ borderRadius: 8 }}>
             Change Password
           </Link>
+
+          {/* optional if you want a button here too */}
+          {/* <button className="btn btnGhost" onClick={signOut}>Log out</button> */}
         </div>
       </div>
 
