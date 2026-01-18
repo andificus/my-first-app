@@ -155,9 +155,28 @@ body {
   opacity: 1;
 }
 
+.input {
+  padding: 10px;
+  width: 100%;
+  border-radius: 10px;
+
+  /* keep the real border */
+  border: 1px solid var(--input-border);
+
+  background: var(--input-bg);
+  color: var(--text);
+
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--input-border) 70%, transparent),
+    inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
 .input:focus {
   outline: none;
-  border-color: color-mix(in srgb, var(--input-border) 50%, var(--link));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--link) 20%, transparent);
+  border-color: var(--link);
+  box-shadow:
+    inset 0 0 0 1px var(--link),
+    0 0 0 3px color-mix(in srgb, var(--link) 25%, transparent);
 }
+
 
