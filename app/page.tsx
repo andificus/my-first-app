@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   return (
@@ -10,35 +11,62 @@ export default function Home() {
       }}
     >
       {/* Hero */}
-      <section style={{ marginBottom: 44 }}>
-        <p style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12, opacity: 0.75 }}>
-          In active development
-        </p>
+      <section
+        style={{
+          display: 'grid',
+          gap: 24,
+          gridTemplateColumns: '1.15fr 0.85fr',
+          alignItems: 'center',
+          marginBottom: 44,
+        }}
+      >
+        <div>
+          <p style={{ letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: 12, opacity: 0.75 }}>
+            In active development
+          </p>
 
-        <h1
-          style={{
-            fontSize: 54,
-            lineHeight: 1.05,
-            margin: '10px 0 14px',
-            letterSpacing: '-0.03em',
-          }}
-        >
-          Build with intent.
-        </h1>
+          <h1
+            style={{
+              fontSize: 54,
+              lineHeight: 1.05,
+              margin: '10px 0 14px',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Build with intent.
+          </h1>
 
-        <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
-          A modern web app I’m building hands-on to sharpen real-world skills: authentication, data, and a clean
-          foundation that’s ready to scale into bigger features.
-        </p>
+          <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
+            A modern web app I’m building hands-on to sharpen real-world skills: authentication, data, and a clean
+            foundation that’s ready to scale into bigger features.
+          </p>
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-          <Link href="/dashboard" className="btn btnPrimary">
-            Open Dashboard
-          </Link>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
+            <Link href="/dashboard" className="btn btnPrimary">
+              Open Dashboard
+            </Link>
 
-          <Link href="/profile" className="btn btnGhost">
-            Manage Profile
-          </Link>
+            <Link href="/profile" className="btn btnGhost">
+              Manage Profile
+            </Link>
+          </div>
+        </div>
+
+        {/* Hero image (placeholder) */}
+        <div className="card" style={{ padding: 14 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/hero-dashboard.png"
+              alt="Abstract dashboard preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 420px"
+              style={{ objectFit: 'cover' }}
+              priority
+            />
+          </div>
+          <p className="p" style={{ marginTop: 12, marginBottom: 0 }}>
+            Replace this with a real dashboard screenshot later.
+          </p>
         </div>
       </section>
 
@@ -77,7 +105,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Divider-ish spacing */}
+      {/* Key capabilities */}
       <section style={{ marginTop: 30, marginBottom: 18 }}>
         <h2 className="h2" style={{ margin: 0 }}>
           Key capabilities
@@ -87,7 +115,6 @@ export default function Home() {
         </p>
       </section>
 
-      {/* Key capabilities grid */}
       <section
         style={{
           display: 'grid',
@@ -97,7 +124,16 @@ export default function Home() {
         }}
       >
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/cap-auth.png"
+              alt="Authentication preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             Authentication
           </h3>
           <ul className="list">
@@ -108,7 +144,16 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/cap-profile.png"
+              alt="Profile system preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             Profile system
           </h3>
           <ul className="list">
@@ -119,7 +164,16 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/cap-dashboard.png"
+              alt="Dashboard preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             Dashboard foundation
           </h3>
           <ul className="list">
@@ -149,21 +203,48 @@ export default function Home() {
         }}
       >
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/flow-login.png"
+              alt="Sign in flow preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             1) Sign in
           </h3>
           <p className="p">Authenticate securely to access your personal workspace.</p>
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/flow-profile.png"
+              alt="Profile setup preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             2) Set up your profile
           </h3>
-          <p className="p">Add the basics now — more fields will be added as features mature.</p>
+          <p className="p">Add the basics now — more fields can be added as features mature.</p>
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <Image
+              src="/images/flow-dashboard.png"
+              alt="Dashboard overview preview"
+              fill
+              sizes="(max-width: 900px) 100vw, 300px"
+              style={{ objectFit: 'cover' }}
+            />
+          </div>
+          <h3 className="h2" style={{ marginTop: 14 }}>
             3) Use the dashboard
           </h3>
           <p className="p">Everything routes through the dashboard so the app can grow without getting messy.</p>
@@ -250,6 +331,21 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* Small responsive tweak (keeps layout without redesigning) */}
+      <div className="card" style={{ marginTop: 28 }}>
+        <p className="p" style={{ margin: 0 }}>
+          Tip: add your placeholder images under <strong>/public/images</strong>. This page is already wired to use them.
+        </p>
+      </div>
+
+      <style jsx>{`
+        @media (max-width: 900px) {
+          section:first-of-type {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </main>
   )
 }
