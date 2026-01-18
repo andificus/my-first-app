@@ -46,6 +46,10 @@ html[data-theme="dark"] {
 body {
   background: var(--bg);
   color: var(--text);
+  background-image:
+    radial-gradient(800px 500px at 10% 0%, rgba(255,255,255,0.18), transparent 60%),
+    radial-gradient(700px 450px at 90% 10%, rgba(120,180,255,0.12), transparent 55%),
+    radial-gradient(900px 600px at 50% 100%, rgba(140,255,200,0.10), transparent 60%);
 }
 
 /* Reusable components */
