@@ -70,6 +70,10 @@ export default function NavBar() {
       else setAvatarUrl(null)
     })
 
+    useEffect(() => {
+      console.log('NavBar mounted (hydrated)')
+    }, [])
+
     return () => {
       cancelled = true
       sub.subscription.unsubscribe()
