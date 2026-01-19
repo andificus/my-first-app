@@ -15,7 +15,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null) // internal UUID (keep for DB relations)
+  const [userId, setUserId] = useState<string | null>(null) // internal UUID
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -26,21 +26,14 @@ export default function DashboardPage() {
       setLoading(true)
 
       try {
-        // 1) try session
-        const { data: s1, error: sErr } = await supabase.auth.getSession()
-        if (sErr) console.error('getSession error:', sErr.message)
-
+        const { data: s1 } = await supabase.auth.getSession()
         let user = s1.session?.user ?? null
 
-        // 2) fallback: getUser (but don't treat "missing session" as a real error)
         if (!user) {
           const { data: u1, error: uErr } = await supabase.auth.getUser()
-
-          // Supabase often returns "Auth session missing!" when logged out — ignore that noise
           if (uErr && !String(uErr.message || '').toLowerCase().includes('auth session missing')) {
             console.error('getUser error:', uErr.message)
           }
-
           user = u1.user ?? null
         }
 
@@ -84,7 +77,6 @@ export default function DashboardPage() {
     window.location.href = '/login'
   }
 
-  // ✅ compute display values WITHOUT hooks
   const displayName =
     profile?.full_name?.trim()
       ? profile.full_name
@@ -112,7 +104,16 @@ export default function DashboardPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 980, margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 16,
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}
+      >
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
           <p style={{ marginTop: 0, color: 'var(--muted)' }}>
@@ -133,6 +134,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Profile completion */}
       <div className="card" style={{ marginTop: 18 }}>
         <h2 style={{ marginTop: 0 }}>Profile completion</h2>
         <p style={{ color: 'var(--muted)' }}>
@@ -148,17 +150,27 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div style={{ marginTop: 16, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+      {/* Grid */}
+      <div
+        style={{
+          marginTop: 16,
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        }}
+      >
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Account</h2>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Username:<br />
+            Username:
+            <br />
             <b>{profile?.username?.trim() ? `@${profile.username}` : 'Not set'}</b>
           </p>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Email:<br />
+            Email:
+            <br />
             <b>{userEmail}</b>
           </p>
 
@@ -166,7 +178,6 @@ export default function DashboardPage() {
             <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
               Advanced
             </summary>
-          
             <div
               style={{
                 marginTop: 8,
@@ -178,4 +189,20 @@ export default function DashboardPage() {
               Internal ID: {userId}
             </div>
           </details>
+        </div>
 
+        <div className="card">
+          <h2 style={{ marginTop: 0 }}>Profile</h2>
+          <p style={{ margin: '8px 0' }}>
+            Name: <b>{profile?.full_name ?? '—'}</b>
+          </p>
+          <p style={{ margin: '8px 0' }}>
+            Bio:
+            <br />
+            <span>{profile?.bio ?? '—'}</span>
+          </p>
+        </div>
+      </div>
+    </main>
+  )
+}
