@@ -39,9 +39,39 @@ export default function NavBar() {
     setAvatarUrl(data?.avatar_url ?? null)
   }
 
-  // ✅ Single source of truth: auth state change (includes INITIAL_SESSION)
+  function clearUserUI() {
+    setUserEmail(null)
+    setAvatarUrl(null)
+    setMenuOpen(false)
+  }
+
+  // ✅ refresh-safe init + subscription
   useEffect(() => {
     let cancelled = false
+
+    const init = async () => {
+      try {
+        // More reliable on refresh than getSession()
+        const { data, error } = await supabase.auth.getUser()
+        if (error) console.error('getUser error:', error.message)
+
+        if (cancelled) return
+
+        const user = data.user
+        if (!user) {
+          clearUserUI()
+          return
+        }
+
+        setUserEmail(user.email ?? null)
+        await loadAvatar(user.id)
+      } catch (e) {
+        console.error('NavBar init crash:', e)
+        if (!cancelled) clearUserUI()
+      }
+    }
+
+    init()
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (cancelled) return
@@ -50,8 +80,7 @@ export default function NavBar() {
       setMenuOpen(false)
 
       if (!user) {
-        setUserEmail(null)
-        setAvatarUrl(null)
+        clearUserUI()
         return
       }
 
@@ -95,7 +124,7 @@ export default function NavBar() {
       console.error('signOut error:', error.message)
       return
     }
-    // ✅ hard navigation avoids “dead UI” states
+    // ✅ most reliable
     window.location.href = '/'
   }
 
