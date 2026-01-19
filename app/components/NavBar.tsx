@@ -13,8 +13,8 @@ export default function NavBar() {
 
   const menuRef = useRef<HTMLDivElement | null>(null)
   const btnRef = useRef<HTMLButtonElement | null>(null)
+  const avatarReqId = useRef(0)
 
-  // Memoized initials for the avatar fallback
   const initials = useMemo(() => {
     const email = (userEmail ?? '').trim()
     if (!email) return '?'
@@ -25,65 +25,64 @@ export default function NavBar() {
     return (a + b).toUpperCase()
   }, [userEmail])
 
-  // Helper to clear UI on logout
   function clearUserUI() {
     setUserEmail(null)
     setAvatarUrl(null)
     setMenuOpen(false)
   }
 
-  // Effect for Auth and Data Fetching
+  const getUserData = async (user: { id: string; email?: string | null } | null) => {
+    if (!user) {
+      clearUserUI()
+      return
+    }
+
+    setUserEmail(user.email ?? null)
+
+    // protect against late responses overwriting current user
+    const req = ++avatarReqId.current
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('avatar_url')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (error) console.error('Avatar load error:', error.message)
+
+    if (req !== avatarReqId.current) return
+    setAvatarUrl(data?.avatar_url ?? null)
+  }
+
   useEffect(() => {
     setIsMounted(true)
     let cancelled = false
 
-    const getUserData = async (user: any) => {
-      if (!user) {
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (error) console.error('getUser error:', error.message)
+      if (cancelled) return
+      getUserData(data.user ? { id: data.user.id, email: data.user.email } : null)
+    })
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (cancelled) return
+      setMenuOpen(false)
+
+      if (event === 'SIGNED_OUT' || !session?.user) {
         clearUserUI()
         return
       }
 
-      setUserEmail(user.email ?? null)
-
-      // Fetch profile/avatar
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar_url')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (error) {
-        console.error('Avatar load error:', error.message)
-      }
-
-      if (!cancelled && data) {
-        setAvatarUrl(data.avatar_url ?? null)
-      }
-    }
-
-    // 1. Initial Check
-    supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) getUserData(data.user)
-    })
-
-    // 2. Listen for Auth Changes
-    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (cancelled) return
-
-      if (event === 'SIGNED_OUT') {
-        clearUserUI()
-      } else if (session?.user) {
-        getUserData(session.user)
-      }
+      getUserData({ id: session.user.id, email: session.user.email })
     })
 
     return () => {
       cancelled = true
       sub.subscription.unsubscribe()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Effect for closing menu on outside click or Escape key
   useEffect(() => {
     if (!menuOpen) return
 
@@ -108,26 +107,11 @@ export default function NavBar() {
   const logout = async () => {
     setMenuOpen(false)
     const { error } = await supabase.auth.signOut()
-    if (error) {
-      console.error('signOut error:', error.message)
-    }
+    if (error) console.error('signOut error:', error.message)
     window.location.href = '/'
   }
 
-  // Prevent Hydration Mismatch: don't render auth UI until client-side is ready
-  if (!isMounted) {
-    return (
-      <header className="navbar">
-        <nav className="navbarInner">
-          <div className="brandLink">
-            <Image src="/andificus-logo.png" alt="Andificus" width={180} height={42} priority />
-          </div>
-        </nav>
-      </header>
-    )
-  }
-
-  const loggedIn = !!userEmail
+  const loggedIn = isMounted && !!userEmail
 
   return (
     <header className="navbar">
@@ -145,8 +129,12 @@ export default function NavBar() {
 
         {loggedIn && (
           <div className="navbarLinks">
-            <Link href="/dashboard" className="navLink">Dashboard</Link>
-            <Link href="/profile" className="navLink">Profile</Link>
+            <Link href="/dashboard" className="navLink">
+              Dashboard
+            </Link>
+            <Link href="/profile" className="navLink">
+              Profile
+            </Link>
           </div>
         )}
 
@@ -163,13 +151,13 @@ export default function NavBar() {
                 onClick={() => setMenuOpen((v) => !v)}
               >
                 {avatarUrl ? (
-                  <Image 
-                    src={avatarUrl} 
-                    alt="Avatar" 
-                    className="avatarImg" 
-                    width={32} 
-                    height={32} 
-                    unoptimized 
+                  <Image
+                    src={avatarUrl}
+                    alt="Avatar"
+                    className="avatarImg"
+                    width={32}
+                    height={32}
+                    unoptimized
                   />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
@@ -185,10 +173,20 @@ export default function NavBar() {
 
                   <div className="userMenuDivider" />
 
-                  <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                  <Link
+                    href="/dashboard"
+                    className="userMenuItem"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Dashboard
                   </Link>
-                  <Link href="/profile" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                  <Link
+                    href="/profile"
+                    className="userMenuItem"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Profile
                   </Link>
 
@@ -200,10 +198,13 @@ export default function NavBar() {
                 </div>
               )}
             </div>
-          ) : (
+          ) : isMounted ? (
             <Link href="/login" className="btn btnPrimary">
               Login
             </Link>
+          ) : (
+            // keep layout stable during first hydration tick
+            <span style={{ width: 38, height: 38, display: 'inline-block' }} />
           )}
         </div>
       </nav>
