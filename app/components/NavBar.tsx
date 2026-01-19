@@ -4,13 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
-  const router = useRouter()
-
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -27,11 +23,11 @@ export default function NavBar() {
     return (a + b).toUpperCase()
   }, [userEmail])
 
-  async function loadAvatar(uid: string) {
+  async function loadAvatar(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
       .select('avatar_url')
-      .eq('user_id', uid)
+      .eq('user_id', userId)
       .maybeSingle()
 
     if (error) {
@@ -43,7 +39,7 @@ export default function NavBar() {
     setAvatarUrl(data?.avatar_url ?? null)
   }
 
-  // ✅ Use onAuthStateChange as the truth source (includes INITIAL_SESSION)
+  // ✅ Single source of truth: auth state change (includes INITIAL_SESSION)
   useEffect(() => {
     let cancelled = false
 
@@ -55,13 +51,11 @@ export default function NavBar() {
 
       if (!user) {
         setUserEmail(null)
-        setUserId(null)
         setAvatarUrl(null)
         return
       }
 
       setUserEmail(user.email ?? null)
-      setUserId(user.id)
       await loadAvatar(user.id)
     })
 
@@ -71,11 +65,11 @@ export default function NavBar() {
     }
   }, [])
 
-  // ✅ Close menu on outside click + Escape
+  // close dropdown on outside click + Escape
   useEffect(() => {
     if (!menuOpen) return
 
-    const onDown = (e: MouseEvent | PointerEvent) => {
+    const onDown = (e: PointerEvent) => {
       const t = e.target as Node
       if (menuRef.current?.contains(t)) return
       if (btnRef.current?.contains(t)) return
@@ -101,9 +95,11 @@ export default function NavBar() {
       console.error('signOut error:', error.message)
       return
     }
-    // ✅ hard redirect = reliable
+    // ✅ hard navigation avoids “dead UI” states
     window.location.href = '/'
   }
+
+  const loggedIn = !!userEmail
 
   return (
     <header className="navbar">
@@ -119,7 +115,7 @@ export default function NavBar() {
           />
         </Link>
 
-        {userId && (
+        {loggedIn && (
           <div className="navbarLinks">
             <Link href="/dashboard" className="navLink">
               Dashboard
@@ -131,7 +127,7 @@ export default function NavBar() {
         )}
 
         <div className="navbarRight">
-          {userId ? (
+          {loggedIn ? (
             <div className="avatarMenuWrap">
               <button
                 ref={btnRef}
