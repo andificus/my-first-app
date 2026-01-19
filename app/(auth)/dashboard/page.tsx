@@ -163,5 +163,19 @@ export default function DashboardPage() {
           </p>
 
           <details style={{ marginTop: 10 }}>
-            <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>Advanced</summary>
-            <
+            <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
+              Advanced
+            </summary>
+          
+            <div
+              style={{
+                marginTop: 8,
+                color: 'var(--muted)',
+                wordBreak: 'break-all',
+                fontSize: 13,
+              }}
+            >
+              Internal ID: {userId}
+            </div>
+          </details>
+
