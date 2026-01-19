@@ -9,13 +9,30 @@ export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isMounted, setIsMounted] = useState(false) // Fix hydration
+  const [isMounted, setIsMounted] = useState(false)
 
   const menuRef = useRef<HTMLDivElement | null>(null)
   const btnRef = useRef<HTMLButtonElement | null>(null)
 
-  // ... (Your initials logic is fine)
+  // Memoized initials for the avatar fallback
+  const initials = useMemo(() => {
+    const email = (userEmail ?? '').trim()
+    if (!email) return '?'
+    const handle = email.split('@')[0] || email
+    const parts = handle.split(/[\s._-]+/).filter(Boolean)
+    const a = parts[0]?.[0] ?? handle[0] ?? '?'
+    const b = parts[1]?.[0] ?? handle[1] ?? ''
+    return (a + b).toUpperCase()
+  }, [userEmail])
 
+  // Helper to clear UI on logout
+  function clearUserUI() {
+    setUserEmail(null)
+    setAvatarUrl(null)
+    setMenuOpen(false)
+  }
+
+  // Effect for Auth and Data Fetching
   useEffect(() => {
     setIsMounted(true)
     let cancelled = false
@@ -25,31 +42,38 @@ export default function NavBar() {
         clearUserUI()
         return
       }
+
       setUserEmail(user.email ?? null)
-      
-      // Load avatar
-      const { data } = await supabase
+
+      // Fetch profile/avatar
+      const { data, error } = await supabase
         .from('profiles')
         .select('avatar_url')
         .eq('user_id', user.id)
         .maybeSingle()
-      
-      if (!cancelled && data) setAvatarUrl(data.avatar_url)
+
+      if (error) {
+        console.error('Avatar load error:', error.message)
+      }
+
+      if (!cancelled && data) {
+        setAvatarUrl(data.avatar_url ?? null)
+      }
     }
 
-    // Initial check
+    // 1. Initial Check
     supabase.auth.getUser().then(({ data }) => {
       if (!cancelled) getUserData(data.user)
     })
 
-    // Listen for changes
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!cancelled) {
-        if (event === 'SIGNED_OUT') {
-          clearUserUI()
-        } else if (session?.user) {
-          getUserData(session.user)
-        }
+    // 2. Listen for Auth Changes
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (cancelled) return
+
+      if (event === 'SIGNED_OUT') {
+        clearUserUI()
+      } else if (session?.user) {
+        getUserData(session.user)
       }
     })
 
@@ -59,51 +83,127 @@ export default function NavBar() {
     }
   }, [])
 
-  // ... (Your outside click logic is fine)
+  // Effect for closing menu on outside click or Escape key
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node
+      if (menuRef.current?.contains(t) || btnRef.current?.contains(t)) return
+      setMenuOpen(false)
+    }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+
+    window.addEventListener('pointerdown', onDown)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
 
   const logout = async () => {
     setMenuOpen(false)
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error('signOut error:', error.message)
+    }
     window.location.href = '/'
   }
 
-  // Prevent rendering auth-dependent UI until mounted to stop flickering
-  if (!isMounted) return <header className="navbar"><nav className="navbarInner" /></header>
+  // Prevent Hydration Mismatch: don't render auth UI until client-side is ready
+  if (!isMounted) {
+    return (
+      <header className="navbar">
+        <nav className="navbarInner">
+          <div className="brandLink">
+            <Image src="/andificus-logo.png" alt="Andificus" width={180} height={42} priority />
+          </div>
+        </nav>
+      </header>
+    )
+  }
 
   const loggedIn = !!userEmail
 
   return (
     <header className="navbar">
       <nav className="navbarInner">
-        {/* Logo and other code... */}
-        
+        <Link href="/" className="brandLink" aria-label="Andificus home">
+          <Image
+            src="/andificus-logo.png"
+            alt="Andificus"
+            width={180}
+            height={42}
+            priority
+            className="brandLogo"
+          />
+        </Link>
+
         {loggedIn && (
           <div className="navbarLinks">
-            {/* Nav links... */}
+            <Link href="/dashboard" className="navLink">Dashboard</Link>
+            <Link href="/profile" className="navLink">Profile</Link>
           </div>
         )}
 
         <div className="navbarRight">
           {loggedIn ? (
             <div className="avatarMenuWrap">
-              <button ref={btnRef} onClick={() => setMenuOpen(!menuOpen)} className="avatarButton">
+              <button
+                ref={btnRef}
+                type="button"
+                className="avatarButton"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                aria-label="Open user menu"
+                onClick={() => setMenuOpen((v) => !v)}
+              >
                 {avatarUrl ? (
                   <Image 
                     src={avatarUrl} 
                     alt="Avatar" 
+                    className="avatarImg" 
                     width={32} 
                     height={32} 
-                    className="avatarImg" 
-                    unoptimized // Profiles often use external URLs or S3
+                    unoptimized 
                   />
                 ) : (
                   <span className="avatarInitials">{initials}</span>
                 )}
               </button>
-              {/* Menu code... */}
+
+              {menuOpen && (
+                <div ref={menuRef} className="userMenu card" role="menu" aria-label="User menu">
+                  <div className="userMenuHeader">
+                    <div className="userMenuName">Signed in</div>
+                    <div className="userMenuEmail">{userEmail}</div>
+                  </div>
+
+                  <div className="userMenuDivider" />
+
+                  <Link href="/dashboard" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="userMenuItem" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Profile
+                  </Link>
+
+                  <div className="userMenuDivider" />
+
+                  <button type="button" className="userMenuItem" role="menuitem" onClick={logout}>
+                    Log out
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            <Link href="/login" className="btn btnPrimary">Login</Link>
+            <Link href="/login" className="btn btnPrimary">
+              Login
+            </Link>
           )}
         </div>
       </nav>
