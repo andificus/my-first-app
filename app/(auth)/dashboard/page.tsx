@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -15,7 +15,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null) // internal UUID
+  const [userId, setUserId] = useState<string | null>(null) // internal UUID (keep for DB relations)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -26,13 +26,21 @@ export default function DashboardPage() {
       setLoading(true)
 
       try {
-        // 1) session
-        const { data: s1 } = await supabase.auth.getSession()
+        // 1) try session
+        const { data: s1, error: sErr } = await supabase.auth.getSession()
+        if (sErr) console.error('getSession error:', sErr.message)
+
         let user = s1.session?.user ?? null
 
-        // 2) fallback (refresh race protection)
+        // 2) fallback: getUser (but don't treat "missing session" as a real error)
         if (!user) {
-          const { data: u1 } = await supabase.auth.getUser()
+          const { data: u1, error: uErr } = await supabase.auth.getUser()
+
+          // Supabase often returns "Auth session missing!" when logged out — ignore that noise
+          if (uErr && !String(uErr.message || '').toLowerCase().includes('auth session missing')) {
+            console.error('getUser error:', uErr.message)
+          }
+
           user = u1.user ?? null
         }
 
@@ -47,13 +55,13 @@ export default function DashboardPage() {
         setUserEmail(user.email ?? null)
         setUserId(user.id)
 
-        const { data: p, error } = await supabase
+        const { data: p, error: pErr } = await supabase
           .from('profiles')
           .select('full_name, bio, username')
           .eq('user_id', user.id)
           .maybeSingle()
 
-        if (error) console.error('profiles error:', error.message)
+        if (pErr) console.error('profiles error:', pErr.message)
         if (cancelled) return
 
         setProfile(p ?? { full_name: null, bio: null, username: null })
@@ -71,21 +79,18 @@ export default function DashboardPage() {
   }, [router])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) console.error('signOut error:', error.message)
     window.location.href = '/login'
   }
 
-  if (loading) {
-    return <main style={{ padding: 40 }}>Loading…</main>
-  }
-
-  /**
-   * DISPLAY LOGIC
-   */
-  const displayUsername =
-    profile?.username?.trim()
-      ? `@${profile.username}`
-      : userEmail
+  // ✅ compute display values WITHOUT hooks
+  const displayName =
+    profile?.full_name?.trim()
+      ? profile.full_name
+      : profile?.username?.trim()
+        ? `@${profile.username}`
+        : userEmail
 
   const profileComplete = Boolean(
     profile?.username?.trim() &&
@@ -93,33 +98,25 @@ export default function DashboardPage() {
     profile?.bio?.trim()
   )
 
-  const completionPercent = useMemo(() => {
-    let done = 0
-    let total = 3
+  const totalFields = 3
+  const doneFields =
+    (profile?.username?.trim() ? 1 : 0) +
+    (profile?.full_name?.trim() ? 1 : 0) +
+    (profile?.bio?.trim() ? 1 : 0)
 
-    if (profile?.username?.trim()) done++
-    if (profile?.full_name?.trim()) done++
-    if (profile?.bio?.trim()) done++
+  const completionPercent = Math.round((doneFields / totalFields) * 100)
 
-    return Math.round((done / total) * 100)
-  }, [profile])
+  if (loading) {
+    return <main style={{ padding: 40 }}>Loading…</main>
+  }
 
   return (
     <main style={{ padding: 40, maxWidth: 980, margin: '0 auto' }}>
-      {/* HEADER */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
           <p style={{ marginTop: 0, color: 'var(--muted)' }}>
-            Welcome, <b>{displayUsername}</b>
+            Welcome, <b>{displayName}</b>
           </p>
         </div>
 
@@ -136,7 +133,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* PROFILE COMPLETION */}
       <div className="card" style={{ marginTop: 18 }}>
         <h2 style={{ marginTop: 0 }}>Profile completion</h2>
         <p style={{ color: 'var(--muted)' }}>
@@ -152,64 +148,20 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* GRID */}
-      <div
-        style={{
-          marginTop: 16,
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        }}
-      >
-        {/* ACCOUNT */}
+      <div style={{ marginTop: 16, display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Account</h2>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Username:
-            <br />
-            <b>{profile?.username ?? 'Not set'}</b>
+            Username:<br />
+            <b>{profile?.username?.trim() ? `@${profile.username}` : 'Not set'}</b>
           </p>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Email:
-            <br />
+            Email:<br />
             <b>{userEmail}</b>
           </p>
 
-          {/* UUID hidden by default */}
           <details style={{ marginTop: 10 }}>
-            <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
-              Advanced
-            </summary>
-            <div
-              style={{
-                marginTop: 8,
-                color: 'var(--muted)',
-                wordBreak: 'break-all',
-                fontSize: 13,
-              }}
-            >
-              Internal ID: {userId}
-            </div>
-          </details>
-        </div>
-
-        {/* PROFILE SUMMARY */}
-        <div className="card">
-          <h2 style={{ marginTop: 0 }}>Profile</h2>
-
-          <p style={{ margin: '8px 0' }}>
-            Name: <b>{profile?.full_name ?? '—'}</b>
-          </p>
-
-          <p style={{ margin: '8px 0' }}>
-            Bio:
-            <br />
-            <span>{profile?.bio ?? '—'}</span>
-          </p>
-        </div>
-      </div>
-    </main>
-  )
-}
+            <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>Advanced</summary>
+            <
