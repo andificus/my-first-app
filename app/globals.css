@@ -328,6 +328,9 @@ body {
   white-space: nowrap;
 }
 
+.avatarMenuWrap { position: relative; z-index: 60; }
+.userMenu { z-index: 70; }
+
 
 .input {
   padding: 10px;
