@@ -438,7 +438,7 @@ export default function ProfilePage() {
               {updatingEmail ? 'Updating…' : 'Update email'}
             </button>
           
-            <div style={{ fontSize: 12, color: 'var(--btn-text)', marginTop: 8 }}>
+            <div style={{ fontSize: 12, color: 'var(--text)', marginTop: 8 }}>
               You’ll get a confirmation email before the change takes effect.
             </div>
           </div>
