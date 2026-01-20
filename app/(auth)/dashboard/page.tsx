@@ -71,12 +71,7 @@ export default function DashboardPage() {
     }
   }, [router])
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) console.error('signOut error:', error.message)
-    window.location.href = '/login'
-  }
-
+  
   const displayName =
     profile?.full_name?.trim()
       ? profile.full_name
@@ -128,9 +123,6 @@ export default function DashboardPage() {
           <Link href="/reset-password" className="btn btnGhost">
             Change Password
           </Link>
-          <button className="btn btnGhost" onClick={signOut}>
-            Log out
-          </button>
         </div>
       </div>
 
