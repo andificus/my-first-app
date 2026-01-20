@@ -127,16 +127,7 @@ export default function NavBar() {
           />
         </Link>
 
-        {loggedIn && (
-          <div className="navbarLinks">
-            <Link href="/dashboard" className="navLink">
-              Dashboard
-            </Link>
-            <Link href="/profile" className="navLink">
-              Profile
-            </Link>
-          </div>
-        )}
+
 
         <div className="navbarRight">
           {loggedIn ? (
