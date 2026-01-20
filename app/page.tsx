@@ -43,13 +43,7 @@ export default function Home() {
           </p>
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-            <Link href="/dashboard" className="btn btnPrimary">
-              Open Dashboard
-            </Link>
 
-            <Link href="/profile" className="btn btnGhost">
-              Manage Profile
-            </Link>
           </div>
         </div>
 
