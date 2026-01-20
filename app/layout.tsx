@@ -19,9 +19,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Andificus",
-  description: "Built By Andificus",
+  metadataBase: new URL('https://andificus.com'),
+
+  title: {
+    default: 'Andificus',
+    template: '%s | Andificus',
+  },
+
+  description:
+    'Andificus is a modern personal web app built with Next.js, Supabase, and a focus on clean design, performance, and security.',
+
+  openGraph: {
+    title: 'Andificus',
+    description:
+      'A modern personal web app built with Next.js and Supabase.',
+    url: 'https://andificus.com',
+    siteName: 'Andificus',
+    type: 'website',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Andificus',
+    description:
+      'A modern personal web app built with Next.js and Supabase.',
+  },
 };
+
 
 export default function RootLayout({
   children,
