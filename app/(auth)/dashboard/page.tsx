@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import Notes from '@/app/components/Notes'
 
 type Profile = {
   full_name: string | null
@@ -15,7 +16,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const [userEmail, setUserEmail] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null) // internal UUID
+  const [userId, setUserId] = useState<string | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -66,12 +67,9 @@ export default function DashboardPage() {
     }
 
     load()
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [router])
 
-  
   const displayName =
     profile?.full_name?.trim()
       ? profile.full_name
@@ -99,16 +97,15 @@ export default function DashboardPage() {
 
   return (
     <main style={{ padding: 40, maxWidth: 980, margin: '0 auto' }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 16,
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}
-      >
+
+      {/* ── Header ── */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: 16,
+        flexWrap: 'wrap',
+        alignItems: 'center',
+      }}>
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
           <p style={{ marginTop: 0, color: 'var(--muted)' }}>
@@ -126,43 +123,37 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Profile completion */}
-      <div className="card" style={{ marginTop: 18 }}>
-        <h2 style={{ marginTop: 0 }}>Profile completion</h2>
-        <p style={{ color: 'var(--muted)' }}>
-          {profileComplete
-            ? 'Your profile is complete.'
-            : `You are ${completionPercent}% done. Finish your profile to personalize your dashboard.`}
-        </p>
-
-        {!profileComplete && (
+      {/* ── Profile completion ── */}
+      {!profileComplete && (
+        <div className="card" style={{ marginTop: 18 }}>
+          <h2 style={{ marginTop: 0 }}>Profile completion</h2>
+          <p style={{ color: 'var(--muted)' }}>
+            You are {completionPercent}% done. Finish your profile to personalize your
+            dashboard.
+          </p>
           <Link href="/profile" className="btn btnPrimary">
             Complete profile
           </Link>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Grid */}
-      <div
-        style={{
-          marginTop: 16,
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        }}
-      >
+      {/* ── Account + Profile cards ── */}
+      <div style={{
+        marginTop: 16,
+        display: 'grid',
+        gap: 16,
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+      }}>
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Account</h2>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Username:
-            <br />
+            Username:<br />
             <b>{profile?.username?.trim() ? `@${profile.username}` : 'Not set'}</b>
           </p>
 
           <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-            Email:
-            <br />
+            Email:<br />
             <b>{userEmail}</b>
           </p>
 
@@ -170,14 +161,12 @@ export default function DashboardPage() {
             <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
               Advanced
             </summary>
-            <div
-              style={{
-                marginTop: 8,
-                color: 'var(--muted)',
-                wordBreak: 'break-all',
-                fontSize: 13,
-              }}
-            >
+            <div style={{
+              marginTop: 8,
+              color: 'var(--muted)',
+              wordBreak: 'break-all',
+              fontSize: 13,
+            }}>
               Internal ID: {userId}
             </div>
           </details>
@@ -189,12 +178,15 @@ export default function DashboardPage() {
             Name: <b>{profile?.full_name ?? '—'}</b>
           </p>
           <p style={{ margin: '8px 0' }}>
-            Bio:
-            <br />
+            Bio:<br />
             <span>{profile?.bio ?? '—'}</span>
           </p>
         </div>
       </div>
+
+      {/* ── Notes ── */}
+      {userId && <Notes userId={userId} />}
+
     </main>
   )
 }
