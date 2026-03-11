@@ -98,111 +98,103 @@ export default function DashboardPage() {
   }
 
   return (
-    <main style={{
-        minHeight: 'calc(100vh - 120px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px',
-      }}>
-      <div style={{ width: '100%', maxWidth: 420 }}>
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: 16,
-              flexWrap: 'wrap',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
-              <p style={{ marginTop: 0, color: 'var(--muted)' }}>
-                Welcome, <b>{displayName}</b>
-              </p>
+    <main style={{ padding: 40, maxWidth: 980, margin: '0 auto' }}>
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 16,
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <h1 style={{ fontSize: 32, marginBottom: 8 }}>Dashboard</h1>
+          <p style={{ marginTop: 0, color: 'var(--muted)' }}>
+            Welcome, <b>{displayName}</b>
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <Link href="/profile" className="btn btnGhost">
+            Manage Profile
+          </Link>
+          <Link href="/reset-password" className="btn btnGhost">
+            Change Password
+          </Link>
+        </div>
+      </div>
+
+      {/* Profile completion */}
+      <div className="card" style={{ marginTop: 18 }}>
+        <h2 style={{ marginTop: 0 }}>Profile completion</h2>
+        <p style={{ color: 'var(--muted)' }}>
+          {profileComplete
+            ? 'Your profile is complete.'
+            : `You are ${completionPercent}% done. Finish your profile to personalize your dashboard.`}
+        </p>
+
+        {!profileComplete && (
+          <Link href="/profile" className="btn btnPrimary">
+            Complete profile
+          </Link>
+        )}
+      </div>
+
+      {/* Grid */}
+      <div
+        style={{
+          marginTop: 16,
+          display: 'grid',
+          gap: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        }}
+      >
+        <div className="card">
+          <h2 style={{ marginTop: 0 }}>Account</h2>
+
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
+            Username:
+            <br />
+            <b>{profile?.username?.trim() ? `@${profile.username}` : 'Not set'}</b>
+          </p>
+
+          <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
+            Email:
+            <br />
+            <b>{userEmail}</b>
+          </p>
+
+          <details style={{ marginTop: 10 }}>
+            <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
+              Advanced
+            </summary>
+            <div
+              style={{
+                marginTop: 8,
+                color: 'var(--muted)',
+                wordBreak: 'break-all',
+                fontSize: 13,
+              }}
+            >
+              Internal ID: {userId}
             </div>
+          </details>
+        </div>
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <Link href="/profile" className="btn btnGhost">
-                Manage Profile
-              </Link>
-              <Link href="/reset-password" className="btn btnGhost">
-                Change Password
-              </Link>
-            </div>
-          </div>
-
-          {/* Profile completion */}
-          <div className="card" style={{ marginTop: 18 }}>
-            <h2 style={{ marginTop: 0 }}>Profile completion</h2>
-            <p style={{ color: 'var(--muted)' }}>
-              {profileComplete
-                ? 'Your profile is complete.'
-                : `You are ${completionPercent}% done. Finish your profile to personalize your dashboard.`}
-            </p>
-
-            {!profileComplete && (
-              <Link href="/profile" className="btn btnPrimary">
-                Complete profile
-              </Link>
-            )}
-          </div>
-
-          {/* Grid */}
-          <div
-            style={{
-              marginTop: 16,
-              display: 'grid',
-              gap: 16,
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            }}
-          >
-            <div className="card">
-              <h2 style={{ marginTop: 0 }}>Account</h2>
-
-              <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-                Username:
-                <br />
-                <b>{profile?.username?.trim() ? `@${profile.username}` : 'Not set'}</b>
-              </p>
-
-              <p style={{ margin: '8px 0', color: 'var(--muted)' }}>
-                Email:
-                <br />
-                <b>{userEmail}</b>
-              </p>
-
-              <details style={{ marginTop: 10 }}>
-                <summary style={{ color: 'var(--muted)', cursor: 'pointer' }}>
-                  Advanced
-                </summary>
-                <div
-                  style={{
-                    marginTop: 8,
-                    color: 'var(--muted)',
-                    wordBreak: 'break-all',
-                    fontSize: 13,
-                  }}
-                >
-                  Internal ID: {userId}
-                </div>
-              </details>
-            </div>
-
-            <div className="card">
-              <h2 style={{ marginTop: 0 }}>Profile</h2>
-              <p style={{ margin: '8px 0' }}>
-                Name: <b>{profile?.full_name ?? '—'}</b>
-              </p>
-              <p style={{ margin: '8px 0' }}>
-                Bio:
-                <br />
-                <span>{profile?.bio ?? '—'}</span>
-              </p>
-            </div>
-          </div>
-         </div> 
+        <div className="card">
+          <h2 style={{ marginTop: 0 }}>Profile</h2>
+          <p style={{ margin: '8px 0' }}>
+            Name: <b>{profile?.full_name ?? '—'}</b>
+          </p>
+          <p style={{ margin: '8px 0' }}>
+            Bio:
+            <br />
+            <span>{profile?.bio ?? '—'}</span>
+          </p>
+        </div>
+      </div>
     </main>
   )
 }
