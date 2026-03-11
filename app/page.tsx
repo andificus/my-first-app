@@ -1,5 +1,13 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import {
+  HeroIllustration,
+  AuthIllustration,
+  ProfileIllustration,
+  DashboardIllustration,
+  SignInIllustration,
+  SetupProfileIllustration,
+  UseDashboardIllustration,
+} from './components/Illustrations'
 
 export default function Home() {
   return (
@@ -38,26 +46,20 @@ export default function Home() {
           </h1>
 
           <p style={{ fontSize: 18, lineHeight: 1.7, maxWidth: 720, opacity: 0.9, margin: 0 }}>
-            A modern web app I’m building hands-on to sharpen real-world skills: authentication, data, and a clean
-            foundation that’s ready to scale into bigger features.
+            A modern web app I'm building hands-on to sharpen real-world skills: authentication, data, and a clean
+            foundation that's ready to scale into bigger features.
           </p>
 
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-
+            <Link href="/login" className="btn btnPrimary">Get started</Link>
+            <Link href="/dashboard" className="btn btnGhost">View dashboard →</Link>
           </div>
         </div>
 
-        {/* Hero image (placeholder) */}
+        {/* Hero illustration */}
         <div className="card" style={{ padding: 14 }}>
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/hero-dashboard.png"
-              alt="Abstract dashboard preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 420px"
-              style={{ objectFit: 'cover' }}
-              priority
-            />
+          <div style={{ width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', borderRadius: 14 }}>
+            <HeroIllustration />
           </div>
         </div>
       </section>
@@ -75,12 +77,12 @@ export default function Home() {
           <h2 className="h2">What it is</h2>
           <p className="p">
             A focused starter webapp: secure sign-in, a user profile, and a dashboard — built with the structure
-            before adding “real” features.
+            before adding "real" features.
           </p>
         </div>
 
         <div className="card">
-          <h2 className="h2">What I’m practicing</h2>
+          <h2 className="h2">What I'm practicing</h2>
           <ul className="list">
             <li>Modern React + Next.js patterns</li>
             <li>Auth + database workflows (Supabase)</li>
@@ -90,7 +92,7 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <h2 className="h2">What’s next</h2>
+          <h2 className="h2">What's next</h2>
           <p className="p">
             Notes, a more capable dashboard, and a smoother mobile experience — in small, steady iterations.
           </p>
@@ -99,9 +101,7 @@ export default function Home() {
 
       {/* Key capabilities */}
       <section style={{ marginTop: 30, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          Key capabilities
-        </h2>
+        <h2 className="h2" style={{ margin: 0 }}>Key capabilities</h2>
         <p className="p" style={{ marginTop: 8 }}>
           The current build focuses on fundamentals: security, clarity, and a base that can evolve without rewrites.
         </p>
@@ -116,18 +116,10 @@ export default function Home() {
         }}
       >
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/cap-auth.png"
-              alt="Authentication preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <AuthIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            Authentication
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>Authentication</h3>
           <ul className="list">
             <li>Email/password sign-in</li>
             <li>Session handling + protected routes</li>
@@ -136,18 +128,10 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/cap-profile.png"
-              alt="Profile system preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <ProfileIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            Profile system
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>Profile system</h3>
           <ul className="list">
             <li>Edit basic user details</li>
             <li>Stored securely in the database</li>
@@ -156,18 +140,10 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/cap-dashboard.png"
-              alt="Dashboard preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <DashboardIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            Dashboard foundation
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>Dashboard foundation</h3>
           <ul className="list">
             <li>Central place for app tools</li>
             <li>Room for widgets + summaries</li>
@@ -178,9 +154,7 @@ export default function Home() {
 
       {/* How it works */}
       <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          How it works
-        </h2>
+        <h2 className="h2" style={{ margin: 0 }}>How it works</h2>
         <p className="p" style={{ marginTop: 8 }}>
           Straightforward on purpose — the goal is a clean experience, not complexity.
         </p>
@@ -195,59 +169,33 @@ export default function Home() {
         }}
       >
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/flow-login.png"
-              alt="Sign in flow preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <SignInIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            1) Sign in
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>1) Sign in</h3>
           <p className="p">Authenticate securely to access your personal workspace.</p>
         </div>
 
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/flow-profile.png"
-              alt="Profile setup preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <SetupProfileIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            2) Set up your profile
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>2) Set up your profile</h3>
           <p className="p">Add the basics now — more fields can be added as features mature.</p>
         </div>
 
         <div className="card">
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
-            <Image
-              src="/images/flow-dashboard.png"
-              alt="Dashboard overview preview"
-              fill
-              sizes="(max-width: 900px) 100vw, 300px"
-              style={{ objectFit: 'cover' }}
-            />
+          <div style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 14 }}>
+            <UseDashboardIllustration />
           </div>
-          <h3 className="h2" style={{ marginTop: 14 }}>
-            3) Use the dashboard
-          </h3>
+          <h3 className="h2" style={{ marginTop: 14 }}>3) Use the dashboard</h3>
           <p className="p">Everything routes through the dashboard so the app can grow without getting messy.</p>
         </div>
       </section>
 
       {/* Roadmap */}
       <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          Roadmap
-        </h2>
+        <h2 className="h2" style={{ margin: 0 }}>Roadmap</h2>
         <p className="p" style={{ marginTop: 8 }}>
           A simple plan: ship the essentials first, then add power features once the base is solid.
         </p>
@@ -262,9 +210,7 @@ export default function Home() {
         }}
       >
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Now
-          </h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>Now</h3>
           <ul className="list">
             <li>Polish login + reset flow</li>
             <li>Improve profile UX</li>
@@ -273,9 +219,7 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Next
-          </h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>Next</h3>
           <ul className="list">
             <li>Notes (create / edit / delete)</li>
             <li>Dashboard widgets</li>
@@ -284,9 +228,7 @@ export default function Home() {
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Later
-          </h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>Later</h3>
           <ul className="list">
             <li>Activity history</li>
             <li>Settings + preferences</li>
@@ -297,33 +239,26 @@ export default function Home() {
 
       {/* FAQ */}
       <section style={{ marginTop: 34, marginBottom: 18 }}>
-        <h2 className="h2" style={{ margin: 0 }}>
-          FAQ
-        </h2>
+        <h2 className="h2" style={{ margin: 0 }}>FAQ</h2>
       </section>
 
       <section style={{ display: 'grid', gap: 16, marginBottom: 10 }}>
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            Is this a public product?
-          </h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>Is this a public product?</h3>
           <p className="p">
-            Not yet. It’s a personal build that’s being shaped like a real app — clean structure, secure auth, and
+            Not yet. It's a personal build that's being shaped like a real app — clean structure, secure auth, and
             intentional UX.
           </p>
         </div>
 
         <div className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>
-            What’s the goal?
-          </h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>What's the goal?</h3>
           <p className="p">
             Practice building production-quality fundamentals: authentication, data modeling, UI consistency, and
             deployment workflows.
           </p>
         </div>
       </section>
-
     </main>
   )
 }
