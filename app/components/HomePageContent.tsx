@@ -22,15 +22,81 @@ import {
 } from './Illustrations'
 
 const STACK = [
-  { name: 'Next.js 16', category: 'Framework', description: 'App Router, server components, and edge middleware.' },
-  { name: 'React 19', category: 'UI', description: 'Component-based UI with hooks and client/server boundaries.' },
-  { name: 'TypeScript', category: 'Language', description: 'Strict typing throughout — components, queries, and data shapes.' },
-  { name: 'Supabase', category: 'Backend', description: 'Postgres database, authentication, and file storage.' },
-  { name: 'Tailwind CSS v4', category: 'Styling', description: 'Utility classes alongside a custom CSS design token system.' },
-  { name: 'Framer Motion', category: 'Animation', description: 'Scroll-triggered reveals, stagger animations, and hover states.' },
-  { name: 'Vercel', category: 'Deployment', description: 'Automatic deploys on every push to the main branch via GitHub.' },
-  { name: 'GitHub', category: 'Version Control', description: 'Source of truth for all code — full commit history from day one.' },
+  { name: 'Next.js 16',      category: 'Framework',       description: 'App Router, server components, and edge middleware.' },
+  { name: 'React 19',        category: 'UI',              description: 'Component-based UI with hooks and client/server boundaries.' },
+  { name: 'TypeScript',      category: 'Language',        description: 'Strict typing throughout — components, queries, and data shapes.' },
+  { name: 'Supabase',        category: 'Backend',         description: 'Postgres database, authentication, and file storage.' },
+  { name: 'Tailwind CSS v4', category: 'Styling',         description: 'Utility classes alongside a custom CSS design token system.' },
+  { name: 'Framer Motion',   category: 'Animation',       description: 'Scroll-triggered reveals, stagger animations, and hover states.' },
+  { name: 'Vercel',          category: 'Deployment',      description: 'Automatic deploys on every push to the main branch via GitHub.' },
+  { name: 'GitHub',          category: 'Version Control', description: 'Source of truth for all code — full commit history from day one.' },
 ]
+
+function StackCard({ item, index }: { item: typeof STACK[0], index: number }) {
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 32 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+        },
+      }}
+      whileHover={{
+        y: -4,
+        boxShadow: '0 0 0 1.5px var(--link), 0 8px 24px var(--shadow)',
+        transition: { duration: 0.2 },
+      }}
+      className="card"
+      style={{ padding: '14px 16px', cursor: 'default' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+        {/* Animated pulse dot */}
+        <motion.span
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: 0.2 + index * 0.05 }}
+          style={{ display: 'inline-flex', flexShrink: 0 }}
+        >
+          <motion.span
+            animate={{ scale: [1, 1.5, 1], opacity: [0.9, 0.4, 0.9] }}
+            transition={{ duration: 2, delay: 0.5 + index * 0.15, repeat: 2, ease: 'easeInOut' }}
+            style={{
+              display: 'block',
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: 'var(--link)',
+              flexShrink: 0,
+            }}
+          />
+        </motion.span>
+
+        <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
+          {item.name}
+        </span>
+
+        <span style={{
+          fontSize: 10,
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--link)',
+          opacity: 0.75,
+          marginLeft: 'auto',
+        }}>
+          {item.category}
+        </span>
+      </div>
+
+      <p className="p" style={{ fontSize: 13, margin: 0 }}>
+        {item.description}
+      </p>
+    </motion.div>
+  )
+}
 
 export default function HomePageContent() {
   return (
@@ -89,49 +155,17 @@ export default function HomePageContent() {
         </IllustrationFrame>
       </section>
 
-      {/* ── Intro cards ────────────────────────────────────────────────── */}
-      <StaggerGrid
-        style={{
-          display: 'grid',
-          gap: 16,
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          marginBottom: 26,
-        }}
-      >
-        <StaggerCard className="card">
-          <h2 className="h2">What it is</h2>
-          <p className="p">
-            A focused starter webapp: secure sign-in, a user profile, and a dashboard — built
-            with the structure before adding "real" features.
-          </p>
-        </StaggerCard>
-
-        <StaggerCard className="card">
-          <h2 className="h2">What I'm practicing</h2>
-          <ul className="list">
-            <li>Modern React + Next.js patterns</li>
-            <li>Auth + database workflows (Supabase)</li>
-            <li>Production deployment (GitHub → Vercel)</li>
-            <li>Product thinking, UX, and consistency</li>
-          </ul>
-        </StaggerCard>
-
-        <StaggerCard className="card">
-          <h2 className="h2">What's next</h2>
-          <p className="p">
-            Notes, a more capable dashboard, and a smoother mobile experience — in small, steady
-            iterations.
-          </p>
-        </StaggerCard>
-      </StaggerGrid>
-
       {/* ── Tech stack ─────────────────────────────────────────────────── */}
       <SectionHeading
         title="Tech stack"
         subtitle="Everything powering this app from code to deployment."
       />
 
-      <StaggerGrid
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-60px' }}
+        variants={{ visible: { transition: { staggerChildren: 0.07 } }, hidden: {} }}
         style={{
           display: 'grid',
           gap: 12,
@@ -139,29 +173,10 @@ export default function HomePageContent() {
           marginBottom: 28,
         }}
       >
-        {STACK.map((item) => (
-          <StaggerCard key={item.name} className="card" style={{ padding: '14px 16px' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-              <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
-                {item.name}
-              </span>
-              <span style={{
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--link)',
-                opacity: 0.8,
-              }}>
-                {item.category}
-              </span>
-            </div>
-            <p className="p" style={{ fontSize: 13, margin: 0 }}>
-              {item.description}
-            </p>
-          </StaggerCard>
+        {STACK.map((item, i) => (
+          <StackCard key={item.name} item={item} index={i} />
         ))}
-      </StaggerGrid>
+      </motion.div>
 
       {/* ── Key capabilities ───────────────────────────────────────────── */}
       <SectionHeading
@@ -262,27 +277,29 @@ export default function HomePageContent() {
         }}
       >
         <StaggerCard className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>Now</h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>✓ Shipped</h3>
           <ul className="list">
-            <li>Polish login + reset flow</li>
-            <li>Improve profile UX</li>
-            <li>Mobile-friendly layout pass</li>
+            <li>Secure auth + session handling</li>
+            <li>Password reset flow</li>
+            <li>User profile (edit, avatar, theme)</li>
+            <li>Notes (create / edit / delete)</li>
+            <li>Server-side route protection</li>
+            <li>Production deployment pipeline</li>
           </ul>
         </StaggerCard>
 
         <StaggerCard className="card">
-          <h3 className="h2" style={{ marginTop: 0 }}>Next</h3>
+          <h3 className="h2" style={{ marginTop: 0 }}>→ Next</h3>
           <ul className="list">
-            <li>Notes (create / edit / delete)</li>
             <li>Dashboard widgets</li>
-            <li>Better navigation states</li>
+            <li>Better navigation active states</li>
+            <li>Activity history</li>
           </ul>
         </StaggerCard>
 
         <StaggerCard className="card">
           <h3 className="h2" style={{ marginTop: 0 }}>Later</h3>
           <ul className="list">
-            <li>Activity history</li>
             <li>Settings + preferences</li>
             <li>More advanced user roles (if needed)</li>
           </ul>
