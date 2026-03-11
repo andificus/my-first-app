@@ -17,18 +17,18 @@ export default function LoginPage() {
   }, [router])
 
   const signIn = async () => {
-    setMessage('')
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+  setMessage('')
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
 
-    if (error) {
-      setMessage(error.message)
-    } else {
-      router.push('/dashboard')
-    }
+  if (error) {
+    setMessage(error.message)
+  } else {
+    window.location.href = '/dashboard'  // ← change this line
   }
+}
 
   const resetPassword = async () => {
   setMessage('')
