@@ -240,6 +240,42 @@ export default function HomePageContent() {
         </StaggerCard>
       </StaggerGrid>
 
+      {/* ── About ──────────────────────────────────────────────────────── */}
+      <FadeUp>
+        <div
+          className="card"
+          style={{
+            marginTop: 34,
+            marginBottom: 28,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+          }}
+        >
+          <div>
+            <h2 className="h2" style={{ margin: '0 0 12px 0' }}>Andrew Wentzloff</h2>
+            <p className="p" style={{ maxWidth: 640 }}>
+              IT professional by trade, builder by nature. I've spent over a decade keeping
+              enterprise systems running — infrastructure, identity, security, the works.
+              Andificus is where I get to build my own ideas from scratch while also maintaining
+              and expanding my skill base.
+            </p>
+          </div>
+
+          <motion.a
+            href="https://www.linkedin.com/in/andywentzloff"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btnGhost"
+            style={{ alignSelf: 'flex-start' }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            LinkedIn →
+          </motion.a>
+        </div>
+      </FadeUp>
+
       {/* ── FAQ ────────────────────────────────────────────────────────── */}
       <SectionHeading title="FAQ" />
 
