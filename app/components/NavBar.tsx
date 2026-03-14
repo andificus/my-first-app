@@ -59,7 +59,9 @@ export default function NavBar() {
     let cancelled = false
 
     supabase.auth.getUser().then(({ data, error }) => {
-      if (error) console.error('getUser error:', error.message)
+      if (error && !error.message.toLowerCase().includes('auth session missing')) {
+          console.error('getUser error:', error.message)
+        }
       if (cancelled) return
       getUserData(data.user ? { id: data.user.id, email: data.user.email } : null)
     })
