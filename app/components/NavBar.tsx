@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import AndificusLogo from './AndificusLogo'
 
 export default function NavBar() {
   const [userEmail, setUserEmail] = useState<string | null>(null)
@@ -39,7 +40,6 @@ export default function NavBar() {
 
     setUserEmail(user.email ?? null)
 
-    // protect against late responses overwriting current user
     const req = ++avatarReqId.current
 
     const { data, error } = await supabase
@@ -60,8 +60,8 @@ export default function NavBar() {
 
     supabase.auth.getUser().then(({ data, error }) => {
       if (error && !error.message.toLowerCase().includes('auth session missing')) {
-          console.error('getUser error:', error.message)
-        }
+        console.error('getUser error:', error.message)
+      }
       if (cancelled) return
       getUserData(data.user ? { id: data.user.id, email: data.user.email } : null)
     })
@@ -119,17 +119,8 @@ export default function NavBar() {
     <header className="navbar">
       <nav className="navbarInner">
         <Link href="/" className="brandLink" aria-label="Andificus home">
-          <Image
-            src="/andificus-logo.png"
-            alt="Andificus"
-            width={180}
-            height={42}
-            priority
-            className="brandLogo"
-          />
+          <AndificusLogo height={42} />
         </Link>
-
-
 
         <div className="navbarRight">
           {loggedIn ? (
@@ -196,7 +187,6 @@ export default function NavBar() {
               Login
             </Link>
           ) : (
-            // keep layout stable during first hydration tick
             <span style={{ width: 38, height: 38, display: 'inline-block' }} />
           )}
         </div>
